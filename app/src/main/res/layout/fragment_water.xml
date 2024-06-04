@@ -175,8 +175,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:inputType="text"
-                        android:text=""
+                        android:inputType="number"
                         android:textAlignment="center"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -206,14 +205,16 @@
                             tools:ignore="NestedWeights,RtlHardcoded"/>
 
                         <EditText
+                            android:id="@+id/timePicker"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:inputType="number"
-                            android:text=""
+                            android:hint="HH:mm"
+                            android:inputType="time"
                             android:textAlignment="center"
                             android:textSize="20sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            />
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -228,7 +229,7 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="left|center_vertical"
-                            android:text="Thời gian tưới :"
+                            android:text="Số phút tưới :"
                             android:textSize="18sp"
                             android:textStyle="bold"
                             tools:ignore="NestedWeights,RtlHardcoded"/>
@@ -238,8 +239,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
+                            android:hint="mm"
                             android:inputType="number"
-                            android:text=""
                             android:textAlignment="center"
                             android:textSize="20sp"
                             android:textStyle="bold" />
@@ -255,16 +256,37 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/btn_tuoi"
-            android:layout_width="200sp"
-            android:layout_height="50sp"
-            android:background="@android:color/darker_gray"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="#AAAAAA"
             android:text="Tưới"
             android:textColor="#FFFFFF"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:layout_marginHorizontal="10dp" />
+        <LinearLayout
+            android:id="@+id/layout_btn_off"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="10dp">
+            <Button
+                android:id="@+id/btn_tat"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="#AAAAAA"
+                android:text="Tắt"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
     </LinearLayout>
 </LinearLayout>
