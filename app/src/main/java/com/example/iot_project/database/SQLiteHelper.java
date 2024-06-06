@@ -40,10 +40,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public List<Item> getAll() {
         List<Item> list = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
-        Cursor rs = null;
-        try {
-            String order = "id DESC"; // Order by id in descending order
-            rs = db.query("items", null, null, null, null, null, order);
+        String order = "id DESC";
+        Cursor rs = db.query("items", null, null, null, null, null, order);
+
             while (rs != null && rs.moveToNext()) {
                 int id = rs.getInt(0);
                 String time = rs.getString(1);
@@ -51,13 +50,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 Item item = new Item(id, time, detail);
                 list.add(item);
             }
-        } catch (Exception e) {
-            Log.e("SQLiteHelper", "Error reading from database", e);
-        } finally {
-            if (rs != null) {
-                rs.close();
-            }
-        }
         return list;
     }
 

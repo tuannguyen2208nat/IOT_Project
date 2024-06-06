@@ -101,24 +101,15 @@ public class HomeFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerView);
         adapter = new RecycleViewAdapter();
         db = new SQLiteHelper(getContext());
-
+        List<Item> list = db.getAll();
+        adapter.setList(list);
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapter);
-        addItemAndReload("18:00", "test");
     }
 
-    private void addItemAndReload(String time, String detail) {
-        Item item = new Item(time, detail);
-        long id = db.addItem(item);
-        if (id != -1) {
-            loadData();
-        } else {
-            Log.e("HomeFragment", "Failed to insert item");
-        }
-    }
-
-    private void loadData() {
+    private void updateDataFromDatabase() {
+        // Cập nhật dữ liệu từ cơ sở dữ liệu
         List<Item> list = db.getAll();
         adapter.setList(list);
         adapter.notifyDataSetChanged();
@@ -127,6 +118,9 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        loadData();
+        updateDataFromDatabase();
     }
+
+
+
 }
