@@ -1,10 +1,8 @@
-package com.example.iot_project;
+package com.example.iot_project.fragment;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -19,6 +17,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.iot_project.R;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;

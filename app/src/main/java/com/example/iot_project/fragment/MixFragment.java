@@ -1,4 +1,4 @@
-package com.example.iot_project;
+package com.example.iot_project.fragment;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.iot_project.R;
 
 public class MixFragment extends Fragment {
 

@@ -1,4 +1,4 @@
-package com.example.iot_project;
+package com.example.iot_project.fragment;
 
 import static android.content.Context.ALARM_SERVICE;
 
@@ -18,6 +18,9 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.example.iot_project.R;
+import com.example.iot_project.notification.notification;
 
 import java.util.Calendar;
 
@@ -140,7 +143,7 @@ public class WaterFragment extends Fragment {
                                                 if (minute < 10) {
                                                     sminute = "0" + minute;
                                                 }
-                                                Intent intent = new Intent(getContext(), AlarmReceiver.class);
+                                                Intent intent = new Intent(getContext(), notification.class);
                                                 intent.setAction("hengio");
                                                 intent.putExtra("area", khuvuc);
                                                 intent.putExtra("timePicker", shour + ":" + sminute);

@@ -1,4 +1,4 @@
-package com.example.iot_project;
+package com.example.iot_project.database;
 
 import android.content.Context;
 import android.os.Build;

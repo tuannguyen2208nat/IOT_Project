@@ -1,4 +1,4 @@
-package com.example.iot_project;
+package com.example.iot_project.notification;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -10,9 +10,11 @@ import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
 
+import com.example.iot_project.R;
+
 import java.util.Date;
 
-public class AlarmReceiver extends BroadcastReceiver {
+public class notification extends BroadcastReceiver {
 
     private static final String CHANNEL_ID = "201";
 

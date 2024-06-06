@@ -42,7 +42,7 @@
             </intent-filter>
         </activity>
         <service android:name="org.eclipse.paho.android.service.MqttService"/>
-        <receiver android:name=".AlarmReceiver"
+        <receiver android:name=".notification.notification"
             android:exported="false" />
     </application>
 
