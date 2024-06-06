@@ -1,7 +1,6 @@
 plugins {
-    alias(libs.plugins.androidApplication)
+    id 'com.android.application'
 }
-
 android {
     namespace = "com.example.iot_project"
     compileSdk = 34
@@ -18,7 +17,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            minifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -53,4 +52,5 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
     implementation ("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0")
     implementation ("org.eclipse.paho:org.eclipse.paho.android.service:1.1.1")
+    implementation 'org.mongodb:mongodb-driver-sync:4.4.0'
 }
