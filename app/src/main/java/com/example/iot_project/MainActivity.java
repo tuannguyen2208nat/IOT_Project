@@ -14,10 +14,7 @@ import com.example.iot_project.fragment.MixFragment;
 import com.example.iot_project.fragment.WaterFragment;
 
 public class MainActivity extends AppCompatActivity {
-    String scheduler = "";
-    String area = "";
     ActivityMainBinding binding;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -2,9 +2,9 @@ package com.example.iot_project.fragment;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,56 +12,35 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.iot_project.R;
+import com.example.iot_project.adapter.RecycleViewAdapter;
+import com.example.iot_project.database.SQLiteHelper;
+import com.example.iot_project.model.Item;
 import com.squareup.picasso.Picasso;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class HomeFragment extends Fragment {
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     private static final String API_KEY = "37294f583d2e566162db243302715283";
-    private String mParam1;
-    private String mParam2;
-    private View view;
-
-    public HomeFragment() {
-        // Required empty public constructor
-    }
-
-    public static HomeFragment newInstance(String param1, String param2) {
-        HomeFragment fragment = new HomeFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    private RecycleViewAdapter adapter;
+    private RecyclerView recyclerView;
+    private SQLiteHelper db;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
         ImageView imgWeatherIcon = view.findViewById(R.id.imgWeatherIcon);
         TextView txtTemp = view.findViewById(R.id.txtTemp);
         TextView txtHumidity = view.findViewById(R.id.txtHumidity);
@@ -114,5 +93,40 @@ public class HomeFragment extends Fragment {
                 }
         );
         requestQueue.add(jsonObjectRequest);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        recyclerView = view.findViewById(R.id.recyclerView);
+        adapter = new RecycleViewAdapter();
+        db = new SQLiteHelper(getContext());
+
+        LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
+        recyclerView.setLayoutManager(manager);
+        recyclerView.setAdapter(adapter);
+        addItemAndReload("18:00", "test");
+    }
+
+    private void addItemAndReload(String time, String detail) {
+        Item item = new Item(time, detail);
+        long id = db.addItem(item);
+        if (id != -1) {
+            loadData();
+        } else {
+            Log.e("HomeFragment", "Failed to insert item");
+        }
+    }
+
+    private void loadData() {
+        List<Item> list = db.getAll();
+        adapter.setList(list);
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadData();
     }
 }

@@ -244,13 +244,14 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:paddingHorizontal="5sp">
-            <TextView
-                android:id="@+id/logTextView"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textSize="10sp"
+                android:textSize="5sp"
                 android:background="#f0f0f0"
-                android:layout_margin="10dp"/>
+                android:layout_margin="10dp"
+                tools:ignore="SmallSp" />
 
         </LinearLayout>
 

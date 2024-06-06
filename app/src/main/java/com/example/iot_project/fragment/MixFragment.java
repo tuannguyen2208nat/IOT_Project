@@ -18,13 +18,11 @@ public class MixFragment extends Fragment {
 
     private Button btn_mix1, btn_mix2, btn_mix3;
     private ImageButton imgbtn_mix1, imgbtn_mix2, imgbtn_mix3;
-    private TextView tempTextView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mix, container, false);
 
-        tempTextView = view.findViewById(R.id.txtTemp);
         btn_mix1 = view.findViewById(R.id.btn_mix_1);
         btn_mix2 = view.findViewById(R.id.btn_mix_2);
         btn_mix3 = view.findViewById(R.id.btn_mix_3);
