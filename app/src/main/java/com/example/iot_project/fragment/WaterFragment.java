@@ -83,7 +83,6 @@ public class WaterFragment extends Fragment {
         });
 
         btnTuoi.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 if (!area1.isChecked() && !area2.isChecked() && !area3.isChecked()) {
@@ -109,33 +108,30 @@ public class WaterFragment extends Fragment {
                                     khuvuc = 3;
                                 }
                                 if (chedo == 1) {
-                                    Toast.makeText(getActivity(), "Khu vực " + khuvuc + " tuổi thành công !", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), "Máy bơm tưới cây khu vực " + khuvuc + " bật thành công !", Toast.LENGTH_SHORT).show();
                                     Calendar calendar = Calendar.getInstance();
                                     int hour = calendar.get(Calendar.HOUR_OF_DAY);
                                     int minute = calendar.get(Calendar.MINUTE);
+                                    int year = calendar.get(Calendar.YEAR);
+                                    int month = calendar.get(Calendar.MONTH)+1;
+                                    int day = calendar.get(Calendar.DAY_OF_MONTH);
                                     String shour = String.valueOf(hour);
                                     String sminute = String.valueOf(minute);
-                                    String nhatkytxt = shour + ":" + sminute;
+                                    String sday = String.valueOf(day);
+                                    String smonth = String.valueOf(month);
+                                    String syear = String.valueOf(year);
+                                    if(hour<10)
+                                    {
+                                        shour="0"+shour;
+                                    }
+                                    if(minute<10)
+                                    {
+                                        sminute="0"+sminute;
+                                    }
+                                    String timePicker =sday+"/"+"/"+smonth+"/"+"/"+syear+"-"+ shour + ":" + sminute;
                                     String detail = "Máy bơm tưới cây khu vực " + khuvuc + " được bật";
-                                    addItemAndReload(nhatkytxt, detail);
-
+                                    addItemAndReload(timePicker, detail);
                                     water.setText("");
-                                    int finalKhuvuc = khuvuc;
-                                    btnTat.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            Toast.makeText(getActivity(), "Khu vực " + finalKhuvuc + " tắt thành công !", Toast.LENGTH_SHORT).show();
-                                            water.setText("");
-                                            Calendar calendar = Calendar.getInstance();
-                                            int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                                            int minute = calendar.get(Calendar.MINUTE);
-                                            String shour = String.valueOf(hour);
-                                            String sminute = String.valueOf(minute);
-                                            String nhatkytxt = shour + ":" + sminute;
-                                            String detail = "Máy bơm tưới cây khu vực " + finalKhuvuc + " được tắt";
-                                            addItemAndReload(nhatkytxt, detail);
-                                        }
-                                    });
                                 } else {
                                     int hour = 0, minute = 0, water_timeInt = 0;
                                     timePicker = view.findViewById(R.id.timePicker);
@@ -196,18 +192,59 @@ public class WaterFragment extends Fragment {
                                             } else {
                                                 showAlert("Định dạng thời gian không hợp lệ. Vui lòng nhập lại.");
                                             }
-
                                         }
                                     }
                                 }
                             }
-                        }//
+                        }
 
                     }
                 }
             }
         });
 
+        btnTat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!area1.isChecked() && !area2.isChecked() && !area3.isChecked()) {
+                    showAlert("Bạn chưa chọn khu vực");}
+                else
+                {
+                    int khuvuc = 0;
+                    if (area1.isChecked()) {
+                        khuvuc = 1;
+                    } else if (area2.isChecked()) {
+                        khuvuc = 2;
+                    } else if (area3.isChecked()) {
+                        khuvuc = 3;
+                    }
+                    Toast.makeText(getActivity(), "Máy bơm tưới cây khu vực " + khuvuc + " tắt thành công !", Toast.LENGTH_SHORT).show();
+                    Calendar calendar = Calendar.getInstance();
+                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                    int minute = calendar.get(Calendar.MINUTE);
+                    int year = calendar.get(Calendar.YEAR);
+                    int month = calendar.get(Calendar.MONTH)+1;
+                    int day = calendar.get(Calendar.DAY_OF_MONTH);
+                    String shour = String.valueOf(hour);
+                    String sminute = String.valueOf(minute);
+                    String sday = String.valueOf(day);
+                    String smonth = String.valueOf(month);
+                    String syear = String.valueOf(year);
+                    if(hour<10)
+                    {
+                        shour="0"+shour;
+                    }
+                    if(minute<10)
+                    {
+                        sminute="0"+sminute;
+                    }
+                    String timePicker =sday+"/"+"/"+smonth+"/"+"/"+syear+"-"+ shour + ":" + sminute;
+                    String detail = "Máy bơm tưới cây khu vực " + khuvuc + " được tắt";
+                    addItemAndReload(timePicker, detail);
+                    water.setText("");
+                }
+            }
+        });
         CompoundButton.OnCheckedChangeListener listener = new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
