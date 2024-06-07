@@ -161,7 +161,7 @@ public class WaterFragment extends Fragment {
                                                 calendar.set(Calendar.SECOND, 0);
 
                                                 Intent intent = new Intent(getContext(), notification.class);
-                                                intent.setAction("hengio");
+                                                intent.setAction("hengio_tuoi");
                                                 intent.putExtra("area", khuvuc);
                                                 alarmManager = (AlarmManager) getContext().getSystemService(ALARM_SERVICE);
                                                 pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -180,7 +180,7 @@ public class WaterFragment extends Fragment {
                                                 calendar.set(Calendar.MINUTE, minute);
                                                 calendar.set(Calendar.SECOND, 0);
 
-                                                intent.setAction("ketthuc");
+                                                intent.setAction("ketthuc_tuoi");
                                                 intent.putExtra("area", khuvuc);
                                                 alarmManager = (AlarmManager) getContext().getSystemService(ALARM_SERVICE);
                                                 pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
