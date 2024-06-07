@@ -7,7 +7,7 @@
         android:title="@string/home" />
     <item
         android:id="@+id/nav_mixer"
-        android:title="Trộn thuốc"
+        android:title="Trộn phân"
         android:icon="@drawable/nav_mixer"
   />
     <item

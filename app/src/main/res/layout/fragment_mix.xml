@@ -38,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="Trộn thuốc"
+            android:text="Trộn phân"
             android:textColor="@android:color/holo_blue_dark"
             android:textSize="30sp"
             android:textStyle="bold" />
