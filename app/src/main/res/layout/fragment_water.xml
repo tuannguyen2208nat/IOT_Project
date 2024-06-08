@@ -114,32 +114,45 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.75"
+            android:layout_weight="1"
             android:gravity="center"
             tools:ignore="NestedWeights"
             android:orientation="horizontal">
-            <Button
-                android:id="@+id/btn_thu_cong"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@android:color/holo_green_dark"
-                android:text="Thủ công"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-            <Button
+                android:layout_margin="10dp">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:padding="10dp"
+                    android:id="@+id/btn_thu_cong"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/button_manual"
+                    android:text="Thủ công"
+                    android:textColor="#000000"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_margin="10dp">
+
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_tu_dong"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginHorizontal="10dp"
-                android:layout_weight="1"
-                android:background="@android:color/holo_blue_dark"
+                android:background="@drawable/button_automatic"
                 android:text="Tự động"
-                android:textColor="#FFFFFF"
+                android:textColor="#000000"
                 android:textSize="20sp"
                 android:textStyle="bold" />
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -258,16 +271,17 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_tuoi"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:background="#AAAAAA"
+            android:background="@drawable/button_main"
             android:text="Tưới"
-            android:textColor="#FFFFFF"
+            android:textColor="#000000"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_marginHorizontal="10dp" />
@@ -277,14 +291,14 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="10dp">
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_tat"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:background="#AAAAAA"
+                android:background="@drawable/button_off"
                 android:text="Tắt"
-                android:textColor="#FFFFFF"
+                android:textColor="#000000"
                 android:textSize="20sp"
                 android:textStyle="bold" />
         </LinearLayout>

@@ -18,9 +18,14 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.iot_project.R;
 import com.example.iot_project.adapter.RecycleViewAdapter;
+import com.example.iot_project.database.MQTTHelper;
 import com.example.iot_project.database.SQLiteHelper;
 import com.example.iot_project.model.Item;
 import com.squareup.picasso.Picasso;
+
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,7 +36,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class HomeFragment extends Fragment {
-
+    MQTTHelper mqttHelper;
     private static final String API_KEY = "37294f583d2e566162db243302715283";
     private RecycleViewAdapter adapter;
     RecyclerView recyclerView;
@@ -44,14 +49,16 @@ public class HomeFragment extends Fragment {
         ImageView imgWeatherIcon = view.findViewById(R.id.imgWeatherIcon);
         TextView txtTemp = view.findViewById(R.id.txtTemp);
         TextView txtHumidity = view.findViewById(R.id.txtHumidity);
+        TextView txtLight = view.findViewById(R.id.txtLight);
         TextView txtSpeed = view.findViewById(R.id.txtSpeed);
         TextView txtDate = view.findViewById(R.id.txtDate);
-        getJsonWeather(imgWeatherIcon, txtTemp, txtHumidity, txtSpeed, txtDate);
+        getJsonWeather(imgWeatherIcon,txtSpeed, txtDate);
+        startMQTT(txtTemp, txtHumidity, txtLight);
         return view;
     }
 
     @SuppressLint("SetTextI18n")
-    public void getJsonWeather(ImageView imgWeatherIcon, TextView txtTemp, TextView txtHumidity, TextView txtSpeed, TextView txtDate) {
+    public void getJsonWeather(ImageView imgWeatherIcon,  TextView txtSpeed, TextView txtDate) {
         String url = "https://api.openweathermap.org/data/2.5/weather?id=1566083&appid=" + API_KEY;
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
@@ -63,9 +70,6 @@ public class HomeFragment extends Fragment {
                         String urlIcon = "http://openweathermap.org/img/wn/" + icon + "@2x.png";
                         Picasso.get().load(urlIcon).into(imgWeatherIcon);
 
-                        JSONObject main = response.getJSONObject("main");
-                        String temp = main.getString("temp");
-                        String humidity = main.getString("humidity") + "%";
                         JSONObject wind = response.getJSONObject("wind");
                         String speed = wind.getString("speed") + "m/s";
 
@@ -74,13 +78,8 @@ public class HomeFragment extends Fragment {
                         SimpleDateFormat sdf = new SimpleDateFormat("EEEE , dd/MM/yyyy");
                         Date date = new Date(lNgay);
                         String currentTime = sdf.format(date);
-                        double tempKelvin = Double.parseDouble(temp);
-                        double tempCelsius = tempKelvin - 273.15;
-                        String tempCelsiusString = String.format("%.1f", tempCelsius) + "°C";
 
                         txtDate.setText(currentTime);
-                        txtTemp.setText(tempCelsiusString);
-                        txtHumidity.setText(humidity);
                         txtSpeed.setText(speed);
 
                     } catch (JSONException e) {
@@ -109,7 +108,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void updateDataFromDatabase() {
-        // Cập nhật dữ liệu từ cơ sở dữ liệu
         List<Item> list = db.getAll();
         adapter.setList(list);
         adapter.notifyDataSetChanged();
@@ -119,6 +117,47 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
         updateDataFromDatabase();
+    }
+
+    public void startMQTT(TextView txtTemp, TextView txtHumidity,TextView txtLight) {
+        mqttHelper = new MQTTHelper(getContext());
+        mqttHelper.setCallback(new MqttCallbackExtended() {
+            @Override
+            public void connectComplete(boolean reconnect, String serverURI) {
+//                Toast.makeText(getActivity(), "Connected", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void connectionLost(Throwable cause) {
+//                Toast.makeText(getActivity(), "Disconnected", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void messageArrived(String topic, MqttMessage message) throws Exception {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (topic.contains("temp")) {
+                                txtTemp.setText(message.toString() + "°C");
+                            } else if (topic.contains("humid")) {
+                                txtHumidity.setText(message.toString() + "%");
+                            } else if (topic.contains("light")) {
+                                txtLight.setText(message.toString() + "LUX");
+                            }
+                        } catch (NumberFormatException e) {
+                            Log.e("Error", "Failed to parse message to integer: " + e.getMessage());
+                        }
+                    }
+                });
+            }
+
+
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+
+            }
+        });
     }
 
 
