@@ -5,6 +5,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +35,8 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -41,6 +46,8 @@ public class HomeFragment extends Fragment {
     private RecycleViewAdapter adapter;
     RecyclerView recyclerView;
     private SQLiteHelper db;
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private final Random random = new Random();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,8 +59,11 @@ public class HomeFragment extends Fragment {
         TextView txtLight = view.findViewById(R.id.txtLight);
         TextView txtSpeed = view.findViewById(R.id.txtSpeed);
         TextView txtDate = view.findViewById(R.id.txtDate);
+        TextView textview1=view.findViewById(R.id.textview1);
+        TextView textview2=view.findViewById(R.id.textview2);
         getJsonWeather(imgWeatherIcon,txtSpeed, txtDate);
         startMQTT(txtTemp, txtHumidity, txtLight);
+        startDataUpdate(textview1,textview2);
         return view;
     }
 
@@ -124,12 +134,12 @@ public class HomeFragment extends Fragment {
         mqttHelper.setCallback(new MqttCallbackExtended() {
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
-//                Toast.makeText(getActivity(), "Connected", Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
             public void connectionLost(Throwable cause) {
-//                Toast.makeText(getActivity(), "Disconnected", Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
@@ -159,7 +169,34 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+    private void startDataUpdate(TextView textview1, TextView textview2) {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                int Data1, Data2;
+                int randomIncrement1 = random.nextInt(500) + 1;
+                int randomIncrement2 = random.nextInt(500) + 1;
 
+                String oldData1 = textview1.getText().toString();
+                String oldData2 = textview2.getText().toString();
+                boolean containsML1 = oldData1.contains("ml");
+                boolean containsML2 = oldData2.contains("ml");
+
+                int data1 = containsML1 ? Integer.parseInt(oldData1.replaceAll("\\D+", "")) : 0;
+                int data2 = containsML2 ? Integer.parseInt(oldData2.replaceAll("\\D+", "")) : 0;
+
+                Data1 = data1 + randomIncrement1;
+                Data2 = data2 + randomIncrement2;
+                Data1 = Math.max(Data1, 0);
+                Data2 = Math.max(Data2, 0);
+                String newData1 = Data1 + "ml";
+                String newData2 = Data2 + "ml";
+                textview1.setText(newData1);
+                textview2.setText(newData2);
+                handler.postDelayed(this, 15000);
+            }
+        }, 0);
+    }
 
 
 }

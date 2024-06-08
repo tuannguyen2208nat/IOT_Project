@@ -212,10 +212,13 @@
                 android:textStyle="bold">
             </TextView>
             <TextView
+                android:id="@+id/textview1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:gravity="center">
+                android:gravity="center"
+                android:textSize="25sp"
+                android:textStyle="bold">
 
             </TextView>
 
@@ -239,10 +242,13 @@
 
             </TextView>
             <TextView
+                android:id="@+id/textview2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:gravity="center">
+                android:gravity="center"
+                android:textSize="25sp"
+                android:textStyle="bold">
             </TextView>
         </LinearLayout>
 
