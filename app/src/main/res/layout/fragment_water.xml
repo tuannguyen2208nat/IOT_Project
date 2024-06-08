@@ -166,7 +166,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="left|center_vertical"
-                        android:text="Lưu lượng nước(ml) :"
+                        android:text="Lưu lượng nước(ml)"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         tools:ignore="NestedWeights,RtlHardcoded" />
@@ -200,13 +200,13 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="left|center_vertical"
-                            android:text="Hẹn giờ tưới :"
+                            android:text="Bắt đầu tưới"
                             android:textSize="18sp"
                             android:textStyle="bold"
                             tools:ignore="NestedWeights,RtlHardcoded"/>
 
                         <EditText
-                            android:id="@+id/timePicker"
+                            android:id="@+id/timePicker_on"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -230,18 +230,18 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="left|center_vertical"
-                            android:text="Số phút tưới :"
+                            android:text="Kết thúc tưới"
                             android:textSize="18sp"
                             android:textStyle="bold"
                             tools:ignore="NestedWeights,RtlHardcoded"/>
 
                         <EditText
-                            android:id="@+id/water_time"
+                            android:id="@+id/timePicker_off"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:hint="mm"
-                            android:inputType="number"
+                            android:hint="HH:mm"
+                            android:inputType="time"
                             android:textAlignment="center"
                             android:textSize="20sp"
                             android:textStyle="bold" />

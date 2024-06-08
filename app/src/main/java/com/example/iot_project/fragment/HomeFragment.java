@@ -34,7 +34,7 @@ public class HomeFragment extends Fragment {
 
     private static final String API_KEY = "37294f583d2e566162db243302715283";
     private RecycleViewAdapter adapter;
-    private RecyclerView recyclerView;
+    RecyclerView recyclerView;
     private SQLiteHelper db;
 
     @Override

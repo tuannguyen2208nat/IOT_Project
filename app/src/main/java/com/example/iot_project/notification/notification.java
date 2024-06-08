@@ -28,7 +28,7 @@ public class notification extends BroadcastReceiver {
     private static final String CHANNEL_ID_21 = "CHANNEL_21";
     private static final String CHANNEL_ID_22 = "CHANNEL_22";
     private static final String CHANNEL_ID_23 = "CHANNEL_23";
-    private RecycleViewAdapter adapter;
+    RecycleViewAdapter adapter;
     private SQLiteHelper db;
 
     @Override

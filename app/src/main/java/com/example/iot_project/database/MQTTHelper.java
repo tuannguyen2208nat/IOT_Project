@@ -1,7 +1,5 @@
 package com.example.iot_project.database;
-
 import android.content.Context;
-import android.os.Build;
 import android.util.Log;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
@@ -18,11 +16,11 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 public class MQTTHelper {
     public MqttAndroidClient mqttAndroidClient;
 
-    public final String[] arrayTopics = {"NPNLab_BBC/feeds/cambien1", "NPNLab_BBC/feeds/cambien2"};
+    public final String[] arrayTopics = {"tuannguyen2208natIOT/feeds/temp", "tuannguyen2208natIOT/feeds/light", "tuannguyen2208natIOT/feeds/humid"};
 
     final String clientId = "12345678";
-    final String username = "NPNLab_BBC";
-    final String password = "aio_pzfT15oINvfiHAVaNbC4FJFUXjcZ";
+    final String username = "tuannguyen2208natIOT";
+    final String password = "aio_wnQm53fmM9l5isDg6bvI95KHhqHT";
 
     final String serverUri = "tcp://io.adafruit.com:1883";
 
@@ -98,13 +96,11 @@ public class MQTTHelper {
                     public void onSuccess(IMqttToken asyncActionToken) {
                         Log.d("TEST", "Subscribed!");
                     }
-
                     @Override
                     public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                         Log.d("TEST", "Subscribed fail!");
                     }
                 });
-
             } catch (MqttException ex) {
                 System.err.println("Exceptionst subscribing");
                 ex.printStackTrace();

@@ -8,7 +8,6 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,12 +33,12 @@ public class WaterFragment extends Fragment {
 
     LinearLayout layout_btn_on, layout_tu_dong, layout_btn_off;
     Button btn_thu_cong, btn_tu_dong, btnTuoi, btnTat;
-    EditText water, timePicker, water_time;
+    EditText water, timePicker_on, timePicker_off;
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
     private int chedo = 0;
     private int waterInt = 0;
-    private RecycleViewAdapter adapter;
+    RecycleViewAdapter adapter;
     private SQLiteHelper db;
 
     @Override
@@ -107,6 +106,7 @@ public class WaterFragment extends Fragment {
                                 } else if (area3.isChecked()) {
                                     khuvuc = 3;
                                 }
+                                Toast.makeText(getActivity(), "Đang xử lý...", Toast.LENGTH_SHORT).show();
                                 if (chedo == 1) {
                                     Toast.makeText(getActivity(), "Máy bơm tưới cây khu vực " + khuvuc + " bật thành công !", Toast.LENGTH_SHORT).show();
                                     Calendar calendar = Calendar.getInstance();
@@ -133,31 +133,35 @@ public class WaterFragment extends Fragment {
                                     addItemAndReload(timePicker, detail);
                                     water.setText("");
                                 } else {
-                                    int hour = 0, minute = 0, water_timeInt = 0;
-                                    timePicker = view.findViewById(R.id.timePicker);
-                                    water_time = view.findViewById(R.id.water_time);
-                                    String timeText = timePicker.getText().toString();
-                                    String water_timeText = water_time.getText().toString();
-                                    water_timeInt = Integer.parseInt(water_timeText);
-                                    if (timeText.isEmpty() || water_timeText.isEmpty()) {
+                                    int hour_on , minute_on , hour_off , minute_off; ;
+                                    timePicker_on = view.findViewById(R.id.timePicker_on);
+                                    timePicker_off = view.findViewById(R.id.timePicker_off);
+                                    String timeText_on = timePicker_on.getText().toString();
+                                    String timeText_off = timePicker_off.getText().toString();
+                                    if (timeText_on.isEmpty() || timeText_off.isEmpty()) {
                                         showAlert("Bạn chưa nhập đủ thông tin");
                                     } else {
-                                        if (water_timeInt < 1) {
-                                            showAlert("Số phút tưới không hợp lệ. Vui lòng nhập lại.");
-                                        } else {
-                                            if (timeText.contains(":")) {
-                                                String[] timeParts = timeText.split(":");
-                                                hour = Integer.parseInt(timeParts[0].trim());
-                                                minute = Integer.parseInt(timeParts[1].trim());
-                                                if ((hour < 0 || hour > 23) || (minute < 0 || minute > 59)) {
-                                                    showAlert("Thời gian không hợp lệ. Vui lòng nhập lại.");
+                                            if (timeText_on.contains(":")||timeText_off.contains(":")) {
+                                                String[] timeParts_on = timeText_on.split(":");
+                                                hour_on = Integer.parseInt(timeParts_on[0].trim());
+                                                minute_on = Integer.parseInt(timeParts_on[1].trim());
+                                                if ((hour_on < 0 || hour_on > 23) || (minute_on < 0 || minute_on > 59)) {
+                                                    showAlert("Thời gian bắt dầu tưới không hợp lệ. Vui lòng nhập lại.");
+                                                    return;
+                                                }
+
+                                                String[] timeParts_off = timeText_off.split(":");
+                                                hour_off = Integer.parseInt(timeParts_off[0].trim());
+                                                minute_off = Integer.parseInt(timeParts_off[1].trim());
+                                                if ((hour_off < 0 || hour_off > 23) || (minute_off < 0 || minute_off > 59)) {
+                                                    showAlert("Thời gian kết thúc tưới không hợp lệ. Vui lòng nhập lại.");
                                                     return;
                                                 }
 
                                                 Calendar calendar = Calendar.getInstance();
                                                 calendar.setTimeInMillis(System.currentTimeMillis());
-                                                calendar.set(Calendar.HOUR_OF_DAY, hour);
-                                                calendar.set(Calendar.MINUTE, minute);
+                                                calendar.set(Calendar.HOUR_OF_DAY, hour_on);
+                                                calendar.set(Calendar.MINUTE, minute_on);
                                                 calendar.set(Calendar.SECOND, 0);
 
                                                 Intent intent = new Intent(getContext(), notification.class);
@@ -166,18 +170,11 @@ public class WaterFragment extends Fragment {
                                                 alarmManager = (AlarmManager) getContext().getSystemService(ALARM_SERVICE);
                                                 pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                                                 alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-                                                Toast.makeText(getActivity(), "Đặt lịch tưới khu vực " + khuvuc + " thành công !", Toast.LENGTH_SHORT).show();
 
-                                                int water_timeIntCD = minute + water_timeInt;
-                                                if (water_timeIntCD >= 60) {
-                                                    hour = hour + water_timeIntCD / 60;
-                                                    minute = water_timeIntCD % 60;
-                                                } else {
-                                                    minute = water_timeIntCD;
-                                                }
-
-                                                calendar.set(Calendar.HOUR_OF_DAY, hour);
-                                                calendar.set(Calendar.MINUTE, minute);
+                                                calendar = Calendar.getInstance();
+                                                calendar.setTimeInMillis(System.currentTimeMillis());
+                                                calendar.set(Calendar.HOUR_OF_DAY, hour_off);
+                                                calendar.set(Calendar.MINUTE, minute_off);
                                                 calendar.set(Calendar.SECOND, 0);
 
                                                 intent.setAction("ketthuc_tuoi");
@@ -185,19 +182,15 @@ public class WaterFragment extends Fragment {
                                                 alarmManager = (AlarmManager) getContext().getSystemService(ALARM_SERVICE);
                                                 pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                                                 alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-                                                water.setText("");
-                                                timePicker.setText("");
-                                                water_time.setText("");
-
+                                                Toast.makeText(getActivity(), "Đặt lịch tưới khu vực " + khuvuc + " thành công !", Toast.LENGTH_SHORT).show();
+                                                resetFields();
                                             } else {
                                                 showAlert("Định dạng thời gian không hợp lệ. Vui lòng nhập lại.");
                                             }
-                                        }
                                     }
                                 }
                             }
                         }
-
                     }
                 }
             }
@@ -241,7 +234,7 @@ public class WaterFragment extends Fragment {
                     String timePicker =sday+"/"+"/"+smonth+"/"+"/"+syear+"-"+ shour + ":" + sminute;
                     String detail = "Máy bơm tưới cây khu vực " + khuvuc + " được tắt";
                     addItemAndReload(timePicker, detail);
-                    water.setText("");
+                    resetFields();
                 }
             }
         });
@@ -286,6 +279,11 @@ public class WaterFragment extends Fragment {
         Log.e("WaterFragment", "FHi");
         adapter.setList(list);
         adapter.notifyDataSetChanged();
+    }
+    private void resetFields() {
+        water.setText("");
+        timePicker_on.setText("");
+        timePicker_off.setText("");
     }
 
     private void showAlert(String message) {

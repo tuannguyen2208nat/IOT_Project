@@ -203,7 +203,7 @@
                     android:text="Tên bộ trộn "
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    tools:ignore="NestedWeights" />
+                    tools:ignore="NestedWeights,RtlHardcoded" />
 
 
                 <EditText
@@ -232,7 +232,7 @@
                     android:text="Số lượng nước(ml)"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    tools:ignore="NestedWeights" />
+                    tools:ignore="NestedWeights,RtlHardcoded" />
 
                 <EditText
                     android:id="@+id/scheduler_water"
@@ -260,7 +260,7 @@
                     android:gravity="left|center_vertical"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    tools:ignore="NestedWeights" />
+                    tools:ignore="NestedWeights,RtlHardcoded" />
 
                 <EditText
                     android:id="@+id/scheduler_liquid"
@@ -288,19 +288,47 @@
                     android:text="Hẹn giờ trộn"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    tools:ignore="NestedWeights" />
-
-                <EditText
-                    android:id="@+id/scheduler_timePicker"
+                    tools:ignore="NestedWeights,RtlHardcoded" />
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:hint="HH:mm"
-                    android:inputType="time"
-                    android:text=""
-                    android:textAlignment="center"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:orientation="horizontal">
+
+                    <Spinner
+                        android:id="@+id/select_mode"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textStyle="bold"
+                        android:layout_weight="1"
+                        tools:ignore="NestedWeights" />
+
+                    <LinearLayout
+                        android:id="@+id/layout_scheduler_timePicker"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        tools:ignore="NestedWeights">
+                        <EditText
+                            android:id="@+id/scheduler_timePicker"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:hint="HH:mm"
+                            android:inputType="time"
+                            android:text=""
+                            android:textAlignment="center"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            tools:ignore="NestedWeights" />
+
+
+                    </LinearLayout>
+
+
+
+                </LinearLayout>
+
 
             </LinearLayout>
             <LinearLayout
@@ -317,14 +345,13 @@
                     android:gravity="left|center_vertical"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    tools:ignore="NestedWeights" />
+                    tools:ignore="NestedWeights,RtlHardcoded" />
                 <EditText
                     android:id="@+id/scheduler_time"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:inputType="number"
-                    android:text=""
                     android:textAlignment="center"
                     android:textSize="20sp"
                     android:textStyle="bold"
