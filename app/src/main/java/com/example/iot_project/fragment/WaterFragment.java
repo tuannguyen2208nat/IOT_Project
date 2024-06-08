@@ -231,10 +231,9 @@ public class WaterFragment extends Fragment {
                     {
                         sminute="0"+sminute;
                     }
-                    String timePicker =sday+"/"+"/"+smonth+"/"+"/"+syear+"-"+ shour + ":" + sminute;
+                    String timePicker =sday+"/"+smonth+"/"+syear+"-"+ shour + ":" + sminute;
                     String detail = "Máy bơm tưới cây khu vực " + khuvuc + " được tắt";
                     addItemAndReload(timePicker, detail);
-                    resetFields();
                 }
             }
         });

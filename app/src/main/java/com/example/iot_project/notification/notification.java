@@ -66,7 +66,7 @@ public class notification extends BroadcastReceiver {
             String timePicker = sday + "/"+smonth+"/"+syear+"-"+shour+":"+sminute;
             String datePicker =  sday + "/"+smonth+"/"+syear;
 
-            String detail = "Hẹn giờ: máy bơm tưới cây khu vực " + area + " " + ("hengio_tuoi".equals(intent.getAction()) ? "được bật" : "kết thúc tưới");
+            String detail = "Hẹn giờ: máy bơm tưới cây khu vực " + area + " " + ("hengio_tuoi".equals(intent.getAction()) ? "bắt đầu tưới" : "kết thúc tưới");
             addItemAndReload(timePicker, detail);
 
             String notificationTitle = "Hẹn giờ thành công " + datePicker;
