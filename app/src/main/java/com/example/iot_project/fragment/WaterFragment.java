@@ -36,10 +36,10 @@ public class WaterFragment extends Fragment {
     EditText water, timePicker_on, timePicker_off;
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
-    private int chedo = 0;
     private int waterInt = 0;
     RecycleViewAdapter adapter;
     private SQLiteHelper db;
+    int area=0,mode=0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -61,23 +61,23 @@ public class WaterFragment extends Fragment {
         layout_btn_off.setVisibility(View.GONE);
         layout_tu_dong.setVisibility(View.GONE);
 
-        btn_thu_cong.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                layout_btn_on.setVisibility(View.VISIBLE);
-                layout_btn_off.setVisibility(View.VISIBLE);
-                layout_tu_dong.setVisibility(View.GONE);
-                chedo = 1;
-            }
-        });
-
         btn_tu_dong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 layout_btn_on.setVisibility(View.VISIBLE);
                 layout_btn_off.setVisibility(View.GONE);
                 layout_tu_dong.setVisibility(View.VISIBLE);
-                chedo = 2;
+                mode = 1;
+            }
+        });
+
+        btn_thu_cong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                layout_btn_on.setVisibility(View.VISIBLE);
+                layout_btn_off.setVisibility(View.VISIBLE);
+                layout_tu_dong.setVisibility(View.GONE);
+                mode = 2;
             }
         });
 
@@ -85,133 +85,161 @@ public class WaterFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!area1.isChecked() && !area2.isChecked() && !area3.isChecked()) {
-                    showAlert("Bạn chưa chọn khu vực");
-                } else {
-                    if ((chedo != 1) && (chedo != 2)) {
-                        showAlert("Bạn chưa chọn chế độ");
-                    } else {
-                        String waterText = water.getText().toString();
-                        if (waterText.isEmpty()) {
-                            showAlert("Bạn chưa nhập đủ thông tin");
-                        } else {
-                            waterInt = Integer.parseInt(waterText);
-                            if (waterInt <= 0) {
-                                showAlert("Lượng nước không hợp lệ. Vui lòng nhập lại.");
-                            } else {
-                                int khuvuc = 0;
-                                if (area1.isChecked()) {
-                                    khuvuc = 1;
-                                } else if (area2.isChecked()) {
-                                    khuvuc = 2;
-                                } else if (area3.isChecked()) {
-                                    khuvuc = 3;
-                                }
-                                Toast.makeText(getActivity(), "Đang xử lý...", Toast.LENGTH_SHORT).show();
-                                if (chedo == 1) {
-                                    Toast.makeText(getActivity(), "Máy bơm tưới cây khu vực " + khuvuc + " bật thành công !", Toast.LENGTH_SHORT).show();
-                                    Calendar calendar = Calendar.getInstance();
-                                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                                    int minute = calendar.get(Calendar.MINUTE);
-                                    int year = calendar.get(Calendar.YEAR);
-                                    int month = calendar.get(Calendar.MONTH)+1;
-                                    int day = calendar.get(Calendar.DAY_OF_MONTH);
-                                    String shour = String.valueOf(hour);
-                                    String sminute = String.valueOf(minute);
-                                    String sday = String.valueOf(day);
-                                    String smonth = String.valueOf(month);
-                                    String syear = String.valueOf(year);
-                                    if(hour<10)
-                                    {
-                                        shour="0"+shour;
-                                    }
-                                    if(minute<10)
-                                    {
-                                        sminute="0"+sminute;
-                                    }
-                                    String timePicker =sday+"/"+"/"+smonth+"/"+"/"+syear+"-"+ shour + ":" + sminute;
-                                    String detail = "Máy bơm tưới cây khu vực " + khuvuc + " được bật";
-                                    addItemAndReload(timePicker, detail);
-                                    water.setText("");
-                                } else {
-                                    int hour_on , minute_on , hour_off , minute_off; ;
-                                    timePicker_on = view.findViewById(R.id.timePicker_on);
-                                    timePicker_off = view.findViewById(R.id.timePicker_off);
-                                    String timeText_on = timePicker_on.getText().toString();
-                                    String timeText_off = timePicker_off.getText().toString();
-                                    if (timeText_on.isEmpty() || timeText_off.isEmpty()) {
-                                        showAlert("Bạn chưa nhập đủ thông tin");
-                                    } else {
-                                            if (timeText_on.contains(":")||timeText_off.contains(":")) {
-                                                String[] timeParts_on = timeText_on.split(":");
-                                                hour_on = Integer.parseInt(timeParts_on[0].trim());
-                                                minute_on = Integer.parseInt(timeParts_on[1].trim());
-                                                if ((hour_on < 0 || hour_on > 23) || (minute_on < 0 || minute_on > 59)) {
-                                                    showAlert("Thời gian bắt dầu tưới không hợp lệ. Vui lòng nhập lại.");
-                                                    return;
-                                                }
-
-                                                String[] timeParts_off = timeText_off.split(":");
-                                                hour_off = Integer.parseInt(timeParts_off[0].trim());
-                                                minute_off = Integer.parseInt(timeParts_off[1].trim());
-                                                if ((hour_off < 0 || hour_off > 23) || (minute_off < 0 || minute_off > 59)) {
-                                                    showAlert("Thời gian kết thúc tưới không hợp lệ. Vui lòng nhập lại.");
-                                                    return;
-                                                }
-
-                                                Calendar calendar = Calendar.getInstance();
-                                                calendar.setTimeInMillis(System.currentTimeMillis());
-                                                calendar.set(Calendar.HOUR_OF_DAY, hour_on);
-                                                calendar.set(Calendar.MINUTE, minute_on);
-                                                calendar.set(Calendar.SECOND, 0);
-
-                                                Intent intent = new Intent(getContext(), notification.class);
-                                                intent.setAction("hengio_tuoi");
-                                                intent.putExtra("area", khuvuc);
-                                                alarmManager = (AlarmManager) getContext().getSystemService(ALARM_SERVICE);
-                                                pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                                                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-
-                                                calendar = Calendar.getInstance();
-                                                calendar.setTimeInMillis(System.currentTimeMillis());
-                                                calendar.set(Calendar.HOUR_OF_DAY, hour_off);
-                                                calendar.set(Calendar.MINUTE, minute_off);
-                                                calendar.set(Calendar.SECOND, 0);
-
-                                                intent.setAction("ketthuc_tuoi");
-                                                intent.putExtra("area", khuvuc);
-                                                alarmManager = (AlarmManager) getContext().getSystemService(ALARM_SERVICE);
-                                                pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                                                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-                                                Toast.makeText(getActivity(), "Đặt lịch tưới khu vực " + khuvuc + " thành công !", Toast.LENGTH_SHORT).show();
-                                                resetFields();
-                                            } else {
-                                                showAlert("Định dạng thời gian không hợp lệ. Vui lòng nhập lại.");
-                                            }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                        showAlert("Bạn chưa chọn khu vực");
+                        return;
                 }
+                if ((mode != 1) && (mode != 2)) {
+                        showAlert("Bạn chưa chọn chế độ");
+                        return;
+                    }
+                        String waterText = water.getText().toString();
+                    if (waterText.isEmpty()) {
+                        showAlert("Bạn chưa nhập đủ thông tin");
+                        return;
+                    }
+                        waterInt = Integer.parseInt(waterText);
+                    if (waterInt <= 0) {
+                        showAlert("Lượng nước không hợp lệ. Vui lòng nhập lại.");
+                        return;
+                    }
+                    if (area1.isChecked()) {
+                        area = 1;
+                    } else if (area2.isChecked()) {
+                        area = 2;
+                    } else if (area3.isChecked()) {
+                        area = 3;
+                    }
+                    Toast.makeText(getActivity(), "Đang xử lý...", Toast.LENGTH_SHORT).show();
+                    try {
+                        timePicker_on = view.findViewById(R.id.timePicker_on);
+                        timePicker_off = view.findViewById(R.id.timePicker_off);
+                        String timeText_on = timePicker_on.getText().toString();
+                        String timeText_off = timePicker_off.getText().toString();
+                        int day,month,year, timeIntCD ;
+                        int hour_on , minute_on , hour_off , minute_off; ;
+                        String shour , sminute ,sday,smonth,syear,starttime,endtime,timePicker,detail;
+                        Intent intent = new Intent(getContext(), notification.class);
+                        Calendar calendar = Calendar.getInstance();
+                        Toast.makeText(getActivity(), "Đang xử lý...", Toast.LENGTH_SHORT).show();
+                        switch (mode) {
+                            case 1:
+                                if (!timeText_on.contains(":")||!timeText_off.contains(":")) {
+                                    showAlert("Vui lòng nhập đúng định dạng thời gian");
+                                    break;
+                                }
+                                String[] timeParts = timeText_on.split(":");
+                                hour_on = Integer.parseInt(timeParts[0].trim());
+                                minute_on = Integer.parseInt(timeParts[1].trim());
+                                String[] timeParts_off = timeText_off.split(":");
+                                hour_off = Integer.parseInt(timeParts_off[0].trim());
+                                minute_off = Integer.parseInt(timeParts_off[1].trim());
+
+                                if ((hour_on < 0 || hour_on > 23) || (minute_on < 0 || minute_on > 59)) {
+                                    showAlert("Thời gian không hợp lệ. Vui lòng nhập lại.");
+                                    return;
+                                }
+                                if ((hour_off < 0 || hour_off > 23) || (minute_off < 0 || minute_off > 59)) {
+                                    showAlert("Thời gian kết thúc tưới không hợp lệ. Vui lòng nhập lại.");
+                                    return;
+                                }
+
+                                day=calendar.get(Calendar.DAY_OF_MONTH);
+                                month= calendar.get(Calendar.MONTH) + 1;
+                                year= calendar.get(Calendar.YEAR);
+                                shour = String.valueOf(hour_on);
+                                sminute = String.valueOf(minute_on);
+                                sday=String.valueOf(day);
+                                smonth=String.valueOf(month);
+                                syear=String.valueOf(year);
+                                if(hour_on<10)
+                                {
+                                    shour="0"+shour;
+                                }
+                                if(minute_on<10)
+                                {
+                                    sminute="0"+sminute;
+                                }
+                                timePicker = sday + "/"+smonth+"/"+syear+"-"+shour+":"+sminute;
+                                starttime=shour+":"+sminute;
+                                calendar.setTimeInMillis(System.currentTimeMillis());
+                                calendar.set(Calendar.HOUR_OF_DAY, hour_on);
+                                calendar.set(Calendar.MINUTE, minute_on);
+                                calendar.set(Calendar.SECOND, 0);
+
+                                intent.setAction("hengio_tuoi");
+                                intent.putExtra("area", area);
+                                alarmManager = (AlarmManager) getContext().getSystemService(ALARM_SERVICE);
+                                pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+                                //////
+                                //////
+                                //////
+                                shour = String.valueOf(hour_off);
+                                sminute = String.valueOf(hour_off);
+                                endtime=shour+":"+sminute;
+
+                                detail = "Đặt hẹn giờ tưới cho khu vực "+area+ " bắt đầu tuới từ "+starttime+" đến " +endtime+" thành công.";
+                                addItemAndReload(timePicker, detail);
+                                Toast.makeText(getActivity(), "Đặt hẹn giờ  tưới cho khu vực "+area+ " thành công!", Toast.LENGTH_SHORT).show();
+
+                                resetFields();
+                                break;
+
+                            case 2:
+                                calendar = Calendar.getInstance();
+                                hour_on = calendar.get(Calendar.HOUR_OF_DAY);
+                                minute_on = calendar.get(Calendar.MINUTE);
+                                day=calendar.get(Calendar.DAY_OF_MONTH);
+                                month= calendar.get(Calendar.MONTH) + 1;
+                                year= calendar.get(Calendar.YEAR);
+                                shour = String.valueOf(hour_on);
+                                sminute = String.valueOf(minute_on);
+                                sday=String.valueOf(day);
+                                smonth=String.valueOf(month);
+                                syear=String.valueOf(year);
+                                if(hour_on<10)
+                                {
+                                    shour="0"+shour;
+                                }
+                                if(minute_on<10)
+                                {
+                                    sminute="0"+sminute;
+                                }
+                                timePicker = sday + "/"+smonth+"/"+syear+"-"+shour+":"+sminute;
+                                starttime=shour+":"+sminute;
+                                detail = "Máy bơm tưới cây khu vực "+area + " bắt đầu tuới từ"+starttime;
+                                addItemAndReload(timePicker, detail);
+                                Toast.makeText(getActivity(), "Máy bơm tưới cây khu vực "+ area + " bắt đầu tuới", Toast.LENGTH_SHORT).show();
+                                resetFields();
+                                break;
+
+                            default:
+                                break;
+                        }
+                    } catch (NumberFormatException e) {
+                        showAlert("Thông tin nước, dung dịch và thời gian phải là số");
+                    }
             }
+
         });
 
         btnTat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(getActivity(), "Đang xử lý...", Toast.LENGTH_SHORT).show();
                 if (!area1.isChecked() && !area2.isChecked() && !area3.isChecked()) {
                     showAlert("Bạn chưa chọn khu vực");}
                 else
                 {
-                    int khuvuc = 0;
                     if (area1.isChecked()) {
-                        khuvuc = 1;
+                        area = 1;
                     } else if (area2.isChecked()) {
-                        khuvuc = 2;
+                        area = 2;
                     } else if (area3.isChecked()) {
-                        khuvuc = 3;
+                        area = 3;
                     }
-                    Toast.makeText(getActivity(), "Máy bơm tưới cây khu vực " + khuvuc + " tắt thành công !", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Máy bơm tưới cây khu vực "+ area + " kết thúc tuới", Toast.LENGTH_SHORT).show();
                     Calendar calendar = Calendar.getInstance();
                     int hour = calendar.get(Calendar.HOUR_OF_DAY);
                     int minute = calendar.get(Calendar.MINUTE);
@@ -231,8 +259,8 @@ public class WaterFragment extends Fragment {
                     {
                         sminute="0"+sminute;
                     }
-                    String timePicker =sday+"/"+smonth+"/"+syear+"-"+ shour + ":" + sminute;
-                    String detail = "Máy bơm tưới cây khu vực " + khuvuc + " được tắt";
+                    String  timePicker = sday + "/"+smonth+"/"+syear+"-"+shour+":"+sminute;
+                    String detail = "Máy bơm tưới cây khu vực" + area + " kết thúc.";
                     addItemAndReload(timePicker, detail);
                 }
             }

@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -16,6 +17,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -31,22 +34,24 @@ import com.example.iot_project.notification.notification;
 import java.util.Calendar;
 import java.util.List;
 
-public class MixFragment extends Fragment {
-
+public class AreaFragment extends Fragment {
     private LinearLayout layout_mix1, layout_mix2, layout_mix3;
     Button btn_mix1, btn_mix2, btn_mix3, btn_mixer;
     ImageButton imgbtn_mix1, imgbtn_mix2, imgbtn_mix3;
+    private EditText scheduler_liquid ,scheduler_timePicker, scheduler_time;
     private LinearLayout currentSelectedLayout = null, layout_scheduler_timePicker;
-    private EditText scheduler_name, scheduler_water, scheduler_liquid, scheduler_timePicker, scheduler_time;
+    CheckBox area1, area2, area3;
+    int botron=0,area=0,mode=0;
     AlarmManager alarmManager;
     PendingIntent pendingIntent;
-    private int botron = 0, mode = 0;
+
     RecycleViewAdapter adapter;
     private SQLiteHelper db;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_mix, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_area, container, false);
         db = new SQLiteHelper(getContext());
 
         Spinner select_mode = view.findViewById(R.id.select_mode);
@@ -55,10 +60,13 @@ public class MixFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         select_mode.setAdapter(adapter);
 
+        area1 = view.findViewById(R.id.area1);
+        area2 = view.findViewById(R.id.area2);
+        area3 = view.findViewById(R.id.area3);
         layout_mix1 = view.findViewById(R.id.layout_mix_1);
         layout_mix2 = view.findViewById(R.id.layout_mix_2);
         layout_mix3 = view.findViewById(R.id.layout_mix_3);
-        layout_scheduler_timePicker = view.findViewById(R.id.layout_scheduler_timePicker);
+        layout_scheduler_timePicker=view.findViewById(R.id.layout_scheduler_timePicker);
 
         btn_mix1 = view.findViewById(R.id.btn_mix_1);
         btn_mix2 = view.findViewById(R.id.btn_mix_2);
@@ -67,14 +75,10 @@ public class MixFragment extends Fragment {
         imgbtn_mix1 = view.findViewById(R.id.imgbtn_1);
         imgbtn_mix2 = view.findViewById(R.id.imgbtn_2);
         imgbtn_mix3 = view.findViewById(R.id.imgbtn_3);
-
-        scheduler_name = view.findViewById(R.id.scheduler_name);
-        scheduler_water = view.findViewById(R.id.scheduler_water);
-        scheduler_liquid = view.findViewById(R.id.scheduler_liquid);
-        scheduler_timePicker = view.findViewById(R.id.scheduler_timePicker);
+        scheduler_liquid=view.findViewById(R.id.scheduler_liquid);
         scheduler_time = view.findViewById(R.id.scheduler_time);
+        scheduler_timePicker=view.findViewById(R.id.scheduler_timePicker);
 
-        // Setup button and image button click listeners
         setupButtonClickListener(btn_mix1, layout_mix1);
         setupButtonClickListener(btn_mix2, layout_mix2);
         setupButtonClickListener(btn_mix3, layout_mix3);
@@ -82,6 +86,28 @@ public class MixFragment extends Fragment {
         setupImageButtonClickListener(imgbtn_mix1, layout_mix1);
         setupImageButtonClickListener(imgbtn_mix2, layout_mix2);
         setupImageButtonClickListener(imgbtn_mix3, layout_mix3);
+
+        CompoundButton.OnCheckedChangeListener listener = new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    if (buttonView.getId() == R.id.area1) {
+                        area2.setChecked(false);
+                        area3.setChecked(false);
+                    } else if (buttonView.getId() == R.id.area2) {
+                        area1.setChecked(false);
+                        area3.setChecked(false);
+                    } else if (buttonView.getId() == R.id.area3) {
+                        area1.setChecked(false);
+                        area2.setChecked(false);
+                    }
+                }
+            }
+        };
+
+        area1.setOnCheckedChangeListener(listener);
+        area2.setOnCheckedChangeListener(listener);
+        area3.setOnCheckedChangeListener(listener);
 
         btn_mixer.setOnClickListener(v -> handleMixButtonClick());
 
@@ -106,7 +132,6 @@ public class MixFragment extends Fragment {
 
         return view;
     }
-
     private void setupButtonClickListener(Button button, LinearLayout layout) {
         button.setOnClickListener(v -> changeLayoutColor(layout));
     }
@@ -115,36 +140,62 @@ public class MixFragment extends Fragment {
         imageButton.setOnClickListener(v -> changeLayoutColor(layout));
     }
 
+    private void changeLayoutColor(LinearLayout newLayout) {
+        if (currentSelectedLayout != null) {
+            currentSelectedLayout.setBackgroundResource(R.drawable.border_black_2dp);
+        }
+        newLayout.setBackgroundResource(R.drawable.border_black_2dp_background);
+        currentSelectedLayout = newLayout;
+        if (currentSelectedLayout == layout_mix1) {
+            botron = 1;
+        } else if (currentSelectedLayout == layout_mix2) {
+            botron = 2;
+        } else if (currentSelectedLayout == layout_mix3) {
+            botron = 3;
+        }
+    }
+
     private void handleMixButtonClick() {
+
+        String liquidText = scheduler_liquid.getText().toString();
+        String timeText = scheduler_time.getText().toString();
+        String timePickerText = scheduler_timePicker.getText().toString();
+
         if (botron != 1 && botron != 2 && botron != 3) {
             showAlert("Bạn chưa chọn bộ trộn");
             return;
         }
-
-        String nameText = scheduler_name.getText().toString();
-        String waterText = scheduler_water.getText().toString();
-        String liquidText = scheduler_liquid.getText().toString();
-        String timePickerText = scheduler_timePicker.getText().toString();
-        String timeText = scheduler_time.getText().toString();
-
-        if (nameText.isEmpty() || waterText.isEmpty() || liquidText.isEmpty()) {
-            showAlert("Bạn chưa nhập đủ thông tin");
+        if (!area1.isChecked() && !area2.isChecked() && !area3.isChecked()) {
+            showAlert("Bạn chưa chọn khu vực");
             return;
         }
-
-        if (timeText.isEmpty()) {
-            showAlert("Bạn chưa nhập thời gian trộn");
+        if (scheduler_liquid.getText().toString().isEmpty()) {
+            showAlert("Bạn chưa nhập dung dịch tưới");
             return;
         }
-
+        if (scheduler_time.getText().toString().isEmpty()) {
+            showAlert("Bạn chưa nhập thời gian");
+            return;
+        }
         if (mode == 1 && timePickerText.isEmpty()) {
             showAlert("Bạn chưa nhập thời gian hẹn giờ");
             return;
         }
 
+        int scheduler_liquidInt = Integer.parseInt(liquidText);
+        if (scheduler_liquidInt <= 0) {
+            showAlert("Lượng nước không hợp lệ. Vui lòng nhập lại.");
+            return;
+        }
+        if (area1.isChecked()) {
+            area = 1;
+        } else if (area2.isChecked()) {
+            area = 2;
+        } else if (area3.isChecked()) {
+            area = 3;
+        }
+        Toast.makeText(getActivity(), "Đang xử lý...", Toast.LENGTH_SHORT).show();
         try {
-            int water = Integer.parseInt(waterText);
-            int liquid = Integer.parseInt(liquidText);
             int time = Integer.parseInt(timeText);
             int hour , minute ,day,month,year, timeIntCD ;
             String shour , sminute ,sday,smonth,syear,starttime,endtime,timePicker,detail;
@@ -164,6 +215,7 @@ public class MixFragment extends Fragment {
                         showAlert("Thời gian không hợp lệ. Vui lòng nhập lại.");
                         return;
                     }
+
                     day=calendar.get(Calendar.DAY_OF_MONTH);
                     month= calendar.get(Calendar.MONTH) + 1;
                     year= calendar.get(Calendar.YEAR);
@@ -187,9 +239,9 @@ public class MixFragment extends Fragment {
                     calendar.set(Calendar.MINUTE, minute);
                     calendar.set(Calendar.SECOND, 0);
 
-                    intent.setAction("hengio_tron");
+                    intent.setAction("hengio_tuoi_tron");
                     intent.putExtra("botron", botron);
-                    intent.putExtra("name", nameText);
+                    intent.putExtra("area", area);
                     alarmManager = (AlarmManager) getContext().getSystemService(ALARM_SERVICE);
                     pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                     alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
@@ -201,12 +253,14 @@ public class MixFragment extends Fragment {
                     } else {
                         minute = timeIntCD;
                     }
+
                     shour = String.valueOf(hour);
                     sminute = String.valueOf(minute);
                     endtime=shour+":"+sminute;
-                    detail = "Đặt hẹn giờ cho bộ trộn "+botron + " tên bộ trộn :  " + nameText + " bắt đầu trộn từ "+starttime+" đến " +endtime+" thành công.";
+                    detail = "Đặt hẹn giờ cho bộ trộn "+botron+ " tưới khu vực " + area + " bắt đầu tuới từ "+starttime+" đến " +endtime+" thành công.";
                     addItemAndReload(timePicker, detail);
-                    Toast.makeText(getActivity(), "Đặt hẹn giờ bộ trộn "+botron+ " thành công!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Đặt hẹn giờ bộ trộn "+botron+ " tưới khu vực " + area + " thành công!", Toast.LENGTH_SHORT).show();
+
                     resetFields();
                     break;
 
@@ -245,9 +299,9 @@ public class MixFragment extends Fragment {
                     sminute = String.valueOf(minute);
                     endtime=shour+":"+sminute;
 
-                    detail = "Đặt bộ trộn "+botron + " tên bộ trộn :  " + nameText + " bắt đầu trộn từ "+starttime+" đến " +endtime+" thành công.";
+                    detail = "Đặt bộ trộn "+botron+ " tưới khu vực " + area + " bắt đầu tuới từ "+starttime+" đến " +endtime+" thành công.";
                     addItemAndReload(timePicker, detail);
-                    Toast.makeText(getActivity(), "Đặt bộ trộn "+botron+ " thành công!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Đặt bộ trộn "+botron+ " tưới khu vực " + area + " thành công!", Toast.LENGTH_SHORT).show();
                     resetFields();
                     break;
 
@@ -257,21 +311,7 @@ public class MixFragment extends Fragment {
         } catch (NumberFormatException e) {
             showAlert("Thông tin nước, dung dịch và thời gian phải là số");
         }
-    }
 
-    private void changeLayoutColor(LinearLayout newLayout) {
-        if (currentSelectedLayout != null) {
-            currentSelectedLayout.setBackgroundResource(R.drawable.border_black_2dp);
-        }
-        newLayout.setBackgroundResource(R.drawable.border_black_2dp_background);
-        currentSelectedLayout = newLayout;
-        if (currentSelectedLayout == layout_mix1) {
-            botron = 1;
-        } else if (currentSelectedLayout == layout_mix2) {
-            botron = 2;
-        } else if (currentSelectedLayout == layout_mix3) {
-            botron = 3;
-        }
     }
 
     private void showAlert(String message) {
@@ -281,28 +321,26 @@ public class MixFragment extends Fragment {
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
     }
-
     private void resetFields() {
-        scheduler_name.setText("");
         scheduler_time.setText("");
         scheduler_liquid.setText("");
-        scheduler_water.setText("");
         scheduler_timePicker.setText("");
     }
+
     private void addItemAndReload(String time, String detail) {
         Item item = new Item(time, detail);
         long id = db.addItem(item);
         if (id != -1) {
             loadData();
         } else {
-            Log.e("MixFragment", "Failed to insert item");
+            Log.e("AreaFragment", "Failed to insert item");
         }
     }
 
     private void loadData() {
         adapter = new RecycleViewAdapter();
         List<Item> list = db.getAll();
-        Log.e("MixFragment", "FHi");
+        Log.e("AreaFragment", "FHi");
         adapter.setList(list);
         adapter.notifyDataSetChanged();
     }

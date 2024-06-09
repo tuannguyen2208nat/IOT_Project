@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.MixFragment"
+    android:layout_marginBottom="120sp"
+    android:layout_marginTop="20sp"
+    android:orientation="vertical"
+    android:paddingHorizontal="10sp"
+    >
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <TextClock
+            android:id="@+id/text_clock"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:format12Hour="hh:mm:ss a"
+            android:format24Hour="HH:mm:ss"
+            android:gravity="center"
+            android:textSize="27sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Tưới phân"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/layout_mix_1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@drawable/border_black_2dp"
+            tools:ignore="NestedWeights">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/btn_mix_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Bộ trộn 1"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:background="@android:color/transparent"
+                    >
+
+                </Button>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                tools:ignore="NestedWeights">
+
+                <ImageButton
+                    android:id="@+id/imgbtn_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/mixer_1"
+                    tools:ignore="NestedWeights" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_mix_2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@drawable/border_black_2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/btn_mix_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Bộ trộn 2"
+                    android:textColor="@android:color/black"
+                    android:background="@android:color/transparent"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                tools:ignore="NestedWeights">
+
+                <ImageButton
+                    android:id="@+id/imgbtn_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/mixer_2"
+                    tools:ignore="NestedWeights" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_mix_3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@drawable/border_black_2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/btn_mix_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Bộ trộn 3"
+                    android:textColor="@android:color/black"
+                    android:background="@android:color/transparent"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                tools:ignore="NestedWeights">
+
+                <ImageButton
+                    android:id="@+id/imgbtn_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/mixer_3"
+                    tools:ignore="NestedWeights" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="left|center_vertical"
+                android:text="Khu vực cần tưới"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:ignore="NestedWeights,RtlHardcoded" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginLeft="10dp">
+
+                <CheckBox
+                    android:id="@+id/area1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Khu vực 1"
+                    android:textStyle="bold"
+                    android:textSize="18sp"/>
+                <CheckBox
+                    android:id="@+id/area2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Khu vực 2"
+                    android:textStyle="bold"
+                    android:textSize="18sp"/>
+                <CheckBox
+                    android:id="@+id/area3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Khu vực 3"
+                    android:textStyle="bold"
+                    android:textSize="18sp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Số lượng dung dịch tưới"
+                android:gravity="left|center_vertical"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:ignore="NestedWeights,RtlHardcoded" />
+
+            <EditText
+                android:id="@+id/scheduler_liquid"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:text=""
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="left|center_vertical"
+                android:text="Hẹn giờ trộn"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:ignore="NestedWeights,RtlHardcoded" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <Spinner
+                    android:id="@+id/select_mode"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textStyle="bold"
+                    android:layout_weight="1"
+                    tools:ignore="NestedWeights" />
+
+                <LinearLayout
+                    android:id="@+id/layout_scheduler_timePicker"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    tools:ignore="NestedWeights">
+                    <EditText
+                        android:id="@+id/scheduler_timePicker"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:hint="HH:mm"
+                        android:inputType="time"
+                        android:text=""
+                        android:textAlignment="center"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        tools:ignore="NestedWeights" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Thời gian tưới"
+                android:gravity="left|center_vertical"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:ignore="NestedWeights,RtlHardcoded" />
+            <EditText
+                android:id="@+id/scheduler_time"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:hint="mm"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_mixer"
+            android:layout_width="200sp"
+            android:layout_height="50sp"
+            android:background="@drawable/button_main"
+            android:text="Tưới"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</LinearLayout>
+

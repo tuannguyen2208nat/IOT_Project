@@ -124,7 +124,96 @@ public class notification extends BroadcastReceiver {
 
             notificationManager.notify(getNotificationId(), builder.build());
         }
+        if ("maybom".equals(intent.getAction()))
+        {
+            int id=intent.getIntExtra("id",1);
+            int state = intent.getIntExtra("state", 1);
+            Calendar calendar = Calendar.getInstance();
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int minute = calendar.get(Calendar.MINUTE);
+            int day=calendar.get(Calendar.DAY_OF_MONTH);
+            int month= calendar.get(Calendar.MONTH) + 1;
+            int year= calendar.get(Calendar.YEAR);
+            String shour = String.valueOf(hour);
+            String sminute = String.valueOf(minute);
+            String sday=String.valueOf(day);
+            String smonth=String.valueOf(month);
+            String syear=String.valueOf(year);
+            if(hour<10)
+            {
+                shour="0"+shour;
+            }
+            if(minute<10)
+            {
+                sminute="0"+sminute;
+            }
+            String timePicker = sday + "/"+smonth+"/"+syear+"-"+shour+":"+sminute;
+            String datePicker =  sday + "/"+smonth+"/"+syear;
+
+
+            String detail = "Máy bơm" + id + " " + (state==1 ? "bắt đầu tưới." : "kết thúc tưới.");
+            addItemAndReload(timePicker, detail);
+
+            String notificationTitle = "Tưới cây" + datePicker;
+            String notificationText = "Máy bơm" + id + " " + (state==1 ? "bắt đầu tưới" : "kết thúc tưới");
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, getChannelId(id))
+                    .setContentTitle(notificationTitle)
+                    .setContentText(notificationText)
+                    .setColor(Color.RED)
+                    .setSmallIcon(R.drawable.icon_notifications)
+                    .setCategory(NotificationCompat.CATEGORY_ALARM)
+                    .setDefaults(NotificationCompat.DEFAULT_SOUND);
+
+            notificationManager.notify(getNotificationId(), builder.build());
+        }
+
+        if ("maytron".equals(intent.getAction()))
+        {
+            int id=intent.getIntExtra("id",1);
+            int state = intent.getIntExtra("state", 1);
+            int ID=id+20;
+            Calendar calendar = Calendar.getInstance();
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int minute = calendar.get(Calendar.MINUTE);
+            int day=calendar.get(Calendar.DAY_OF_MONTH);
+            int month= calendar.get(Calendar.MONTH) + 1;
+            int year= calendar.get(Calendar.YEAR);
+            String shour = String.valueOf(hour);
+            String sminute = String.valueOf(minute);
+            String sday=String.valueOf(day);
+            String smonth=String.valueOf(month);
+            String syear=String.valueOf(year);
+            if(hour<10)
+            {
+                shour="0"+shour;
+            }
+            if(minute<10)
+            {
+                sminute="0"+sminute;
+            }
+            String timePicker = sday + "/"+smonth+"/"+syear+"-"+shour+":"+sminute;
+            String datePicker =  sday + "/"+smonth+"/"+syear;
+
+
+            String detail = "Bộ trộn " + id + " " + (state==1 ? "bắt đầu trộn." : "kết thúc tưới.");
+            addItemAndReload(timePicker, detail);
+
+            String notificationTitle = "Tưới cây" + datePicker;
+            String notificationText =  "Bộ trộn " + id + " " + (state==1 ? "bắt đầu trộn!" : "kết thúc tưới!");
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, getChannelId(ID))
+                    .setContentTitle(notificationTitle)
+                    .setContentText(notificationText)
+                    .setColor(Color.RED)
+                    .setSmallIcon(R.drawable.icon_notifications)
+                    .setCategory(NotificationCompat.CATEGORY_ALARM)
+                    .setDefaults(NotificationCompat.DEFAULT_SOUND);
+
+            notificationManager.notify(getNotificationId(), builder.build());
+        }
     }
+
     private void createNotificationChannels(NotificationManager notificationManager) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel1 = new NotificationChannel(CHANNEL_ID_1, "Channel 1", NotificationManager.IMPORTANCE_HIGH);
@@ -159,7 +248,7 @@ public class notification extends BroadcastReceiver {
             case 1: return CHANNEL_ID_1;
             case 2: return CHANNEL_ID_2;
             case 3: return CHANNEL_ID_3;
-            default: return CHANNEL_ID_1; // Default to CHANNEL_1 if area is out of range
+            default: return CHANNEL_ID_1;
         }
     }
 

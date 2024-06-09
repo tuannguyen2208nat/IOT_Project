@@ -1,6 +1,11 @@
 package com.example.iot_project.fragment;
 
+import static android.content.Context.ALARM_SERVICE;
+
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +29,7 @@ import com.example.iot_project.adapter.RecycleViewAdapter;
 import com.example.iot_project.database.MQTTHelper;
 import com.example.iot_project.database.SQLiteHelper;
 import com.example.iot_project.model.Item;
+import com.example.iot_project.notification.notification;
 import com.squareup.picasso.Picasso;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -33,6 +39,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -48,6 +55,8 @@ public class HomeFragment extends Fragment {
     private SQLiteHelper db;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Random random = new Random();
+    AlarmManager alarmManager;
+    PendingIntent pendingIntent;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,13 +65,13 @@ public class HomeFragment extends Fragment {
         ImageView imgWeatherIcon = view.findViewById(R.id.imgWeatherIcon);
         TextView txtTemp = view.findViewById(R.id.txtTemp);
         TextView txtHumidity = view.findViewById(R.id.txtHumidity);
-        TextView txtLight = view.findViewById(R.id.txtLight);
         TextView txtSpeed = view.findViewById(R.id.txtSpeed);
         TextView txtDate = view.findViewById(R.id.txtDate);
         TextView textview1=view.findViewById(R.id.textview1);
         TextView textview2=view.findViewById(R.id.textview2);
         getJsonWeather(imgWeatherIcon,txtSpeed, txtDate);
-        startMQTT(txtTemp, txtHumidity, txtLight);
+        autoRefresh();
+        startMQTT(txtTemp, txtHumidity);
         startDataUpdate(textview1,textview2);
         return view;
     }
@@ -127,21 +136,20 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
         updateDataFromDatabase();
+
     }
 
-    public void startMQTT(TextView txtTemp, TextView txtHumidity,TextView txtLight) {
+    public void startMQTT(TextView txtTemp, TextView txtHumidity) {
         mqttHelper = new MQTTHelper(getContext());
         mqttHelper.setCallback(new MqttCallbackExtended() {
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
 
             }
-
             @Override
             public void connectionLost(Throwable cause) {
 
             }
-
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 getActivity().runOnUiThread(new Runnable() {
@@ -152,8 +160,9 @@ public class HomeFragment extends Fragment {
                                 txtTemp.setText(message.toString() + "°C");
                             } else if (topic.contains("humid")) {
                                 txtHumidity.setText(message.toString() + "%");
-                            } else if (topic.contains("light")) {
-                                txtLight.setText(message.toString() + "LUX");
+                            }
+                            else if (topic.contains("routine"))
+                            {
                             }
                         } catch (NumberFormatException e) {
                             Log.e("Error", "Failed to parse message to integer: " + e.getMessage());
@@ -162,13 +171,23 @@ public class HomeFragment extends Fragment {
                 });
             }
 
-
             @Override
             public void deliveryComplete(IMqttDeliveryToken token) {
 
             }
         });
     }
+
+    public void autoRefresh(){
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                onResume();
+                handler.postDelayed(this, 0);
+            }
+        }, 0);
+    }
+
     private void startDataUpdate(TextView textview1, TextView textview2) {
         handler.postDelayed(new Runnable() {
             @Override
@@ -193,10 +212,20 @@ public class HomeFragment extends Fragment {
                 String newData2 = Data2 + "ml";
                 textview1.setText(newData1);
                 textview2.setText(newData2);
+                onResume();
                 handler.postDelayed(this, 15000);
             }
         }, 0);
     }
 
-
+    private void sendNotification(int state,int id){
+        Calendar calendar = Calendar.getInstance();
+        Intent intent = new Intent(getContext(), notification.class);
+        intent.setAction("maybom");
+        intent.putExtra("id", id);
+        intent.putExtra("state", state);
+        alarmManager = (AlarmManager) getContext().getSystemService(ALARM_SERVICE);
+        pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+    }
 }

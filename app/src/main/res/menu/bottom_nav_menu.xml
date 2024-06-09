@@ -6,12 +6,16 @@
         android:icon="@drawable/nav_home"
         android:title="@string/home" />
     <item
+        android:id="@+id/nav_water"
+        android:title="Tưới cây"
+        android:icon="@drawable/nav_water"/>
+    <item
         android:id="@+id/nav_mixer"
         android:title="Trộn phân"
         android:icon="@drawable/nav_mixer"
   />
     <item
-        android:id="@+id/nav_water"
-        android:title="Tưới cây"
-        android:icon="@drawable/nav_water_pump"/>
+        android:id="@+id/nav_area"
+        android:title="Tưới phân"
+        android:icon="@drawable/nav_area"/>
 </menu>

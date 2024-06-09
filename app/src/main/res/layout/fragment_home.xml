@@ -129,37 +129,6 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="horizontal"
-                android:gravity="center"
-                android:background="@drawable/border_black_1dp"
-                android:layout_margin="2sp">
-
-                <TextView
-                    android:paddingLeft="5dp"
-                    android:gravity="left|center_vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:text="Ánh sáng:"
-                    tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry" />
-                <TextView
-                    android:id="@+id/txtLight"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:text="10000LUX"
-                    android:layout_weight="1" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="horizontal"
                 android:background="@drawable/border_black_1dp"
                 android:layout_margin="2sp">
 
