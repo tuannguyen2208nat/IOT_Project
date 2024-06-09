@@ -240,12 +240,19 @@ public class MixFragment extends Fragment {
                     } else {
                         minute = timeIntCD;
                     }
-
                     shour = String.valueOf(hour);
                     sminute = String.valueOf(minute);
+                    if(hour<10)
+                    {
+                        shour="0"+shour;
+                    }
+                    if(minute<10)
+                    {
+                        sminute="0"+sminute;
+                    }
                     endtime=shour+":"+sminute;
 
-                    detail = "Đặt bộ trộn "+botron + " tên bộ trộn :  " + nameText + " bắt đầu trộn từ "+starttime+" đến " +endtime+" thành công.";
+                    detail = "Đặt bộ trộn "+botron + " tên bộ trộn : ( " + nameText + " ) bắt đầu trộn từ "+starttime+" đến " +endtime+" thành công.";
                     addItemAndReload(timePicker, detail);
                     Toast.makeText(getActivity(), "Đặt bộ trộn "+botron+ " thành công!", Toast.LENGTH_SHORT).show();
                     resetFields();

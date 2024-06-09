@@ -57,9 +57,13 @@ public class WaterFragment extends Fragment {
         btnTuoi = view.findViewById(R.id.btn_tuoi);
         btnTat = view.findViewById(R.id.btn_tat);
         water = view.findViewById(R.id.water);
+        timePicker_on = view.findViewById(R.id.timePicker_on);
+        timePicker_off = view.findViewById(R.id.timePicker_off);
         layout_btn_on.setVisibility(View.GONE);
         layout_btn_off.setVisibility(View.GONE);
         layout_tu_dong.setVisibility(View.GONE);
+
+
 
         btn_tu_dong.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,8 +115,6 @@ public class WaterFragment extends Fragment {
                     }
                     Toast.makeText(getActivity(), "Đang xử lý...", Toast.LENGTH_SHORT).show();
                     try {
-                        timePicker_on = view.findViewById(R.id.timePicker_on);
-                        timePicker_off = view.findViewById(R.id.timePicker_off);
                         String timeText_on = timePicker_on.getText().toString();
                         String timeText_off = timePicker_off.getText().toString();
                         int day,month,year, timeIntCD ;
@@ -176,7 +178,15 @@ public class WaterFragment extends Fragment {
                                 //////
                                 //////
                                 shour = String.valueOf(hour_off);
-                                sminute = String.valueOf(hour_off);
+                                sminute = String.valueOf(minute_off);
+                                if(hour_off<10)
+                                {
+                                    shour="0"+shour;
+                                }
+                                if(minute_off<10)
+                                {
+                                    sminute="0"+sminute;
+                                }
                                 endtime=shour+":"+sminute;
 
                                 detail = "Đặt hẹn giờ tưới cho khu vực "+area+ " bắt đầu tuới từ "+starttime+" đến " +endtime+" thành công.";
@@ -208,7 +218,7 @@ public class WaterFragment extends Fragment {
                                 }
                                 timePicker = sday + "/"+smonth+"/"+syear+"-"+shour+":"+sminute;
                                 starttime=shour+":"+sminute;
-                                detail = "Máy bơm tưới cây khu vực "+area + " bắt đầu tuới từ"+starttime;
+                                detail = "Máy bơm tưới cây khu vực "+area + " bắt đầu tuới từ "+starttime;
                                 addItemAndReload(timePicker, detail);
                                 Toast.makeText(getActivity(), "Máy bơm tưới cây khu vực "+ area + " bắt đầu tuới", Toast.LENGTH_SHORT).show();
                                 resetFields();
@@ -260,7 +270,7 @@ public class WaterFragment extends Fragment {
                         sminute="0"+sminute;
                     }
                     String  timePicker = sday + "/"+smonth+"/"+syear+"-"+shour+":"+sminute;
-                    String detail = "Máy bơm tưới cây khu vực" + area + " kết thúc.";
+                    String detail = "Máy bơm tưới cây khu vực " + area + " kết thúc.";
                     addItemAndReload(timePicker, detail);
                 }
             }

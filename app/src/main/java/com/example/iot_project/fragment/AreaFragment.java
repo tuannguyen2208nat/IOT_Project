@@ -253,11 +253,10 @@ public class AreaFragment extends Fragment {
                     } else {
                         minute = timeIntCD;
                     }
-
                     shour = String.valueOf(hour);
                     sminute = String.valueOf(minute);
                     endtime=shour+":"+sminute;
-                    detail = "Đặt hẹn giờ cho bộ trộn "+botron+ " tưới khu vực " + area + " bắt đầu tuới từ "+starttime+" đến " +endtime+" thành công.";
+                    detail = "Đặt hẹn giờ cho bộ trộn "+botron+ " tưới cho khu vực " + area + " bắt đầu tuới từ "+starttime+" đến " +endtime+" thành công.";
                     addItemAndReload(timePicker, detail);
                     Toast.makeText(getActivity(), "Đặt hẹn giờ bộ trộn "+botron+ " tưới khu vực " + area + " thành công!", Toast.LENGTH_SHORT).show();
 
@@ -294,12 +293,19 @@ public class AreaFragment extends Fragment {
                     } else {
                         minute = timeIntCD;
                     }
-
                     shour = String.valueOf(hour);
                     sminute = String.valueOf(minute);
+                    if(hour<10)
+                    {
+                        shour="0"+shour;
+                    }
+                    if(minute<10)
+                    {
+                        sminute="0"+sminute;
+                    }
                     endtime=shour+":"+sminute;
 
-                    detail = "Đặt bộ trộn "+botron+ " tưới khu vực " + area + " bắt đầu tuới từ "+starttime+" đến " +endtime+" thành công.";
+                    detail = "Đặt bộ trộn "+botron+ " tưới cho khu vực " + area + " bắt đầu tuới từ "+starttime+" đến " +endtime+" thành công.";
                     addItemAndReload(timePicker, detail);
                     Toast.makeText(getActivity(), "Đặt bộ trộn "+botron+ " tưới khu vực " + area + " thành công!", Toast.LENGTH_SHORT).show();
                     resetFields();
