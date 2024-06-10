@@ -24,9 +24,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.IOT_PROJECT"
         tools:targetApi="31">
-        <activity
-            android:name=".UpdateDeleteActivity"
-            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.actions"

@@ -1,11 +1,6 @@
 package com.example.iot_project.fragment;
 
-import static android.content.Context.ALARM_SERVICE;
-
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,7 +24,6 @@ import com.example.iot_project.adapter.RecycleViewAdapter;
 import com.example.iot_project.database.MQTTHelper;
 import com.example.iot_project.database.SQLiteHelper;
 import com.example.iot_project.model.Item;
-import com.example.iot_project.notification.notification;
 import com.squareup.picasso.Picasso;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -39,7 +33,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -55,8 +48,6 @@ public class HomeFragment extends Fragment {
     private SQLiteHelper db;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Random random = new Random();
-    AlarmManager alarmManager;
-    PendingIntent pendingIntent;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -70,9 +61,9 @@ public class HomeFragment extends Fragment {
         TextView textview1=view.findViewById(R.id.textview1);
         TextView textview2=view.findViewById(R.id.textview2);
         getJsonWeather(imgWeatherIcon,txtSpeed, txtDate);
-        autoRefresh();
         startMQTT(txtTemp, txtHumidity);
         startDataUpdate(textview1,textview2);
+        refresh_auto();
         return view;
     }
 
@@ -135,8 +126,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        updateDataFromDatabase();
-
     }
 
     public void startMQTT(TextView txtTemp, TextView txtHumidity) {
@@ -146,10 +135,12 @@ public class HomeFragment extends Fragment {
             public void connectComplete(boolean reconnect, String serverURI) {
 
             }
+
             @Override
             public void connectionLost(Throwable cause) {
 
             }
+
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 getActivity().runOnUiThread(new Runnable() {
@@ -160,9 +151,7 @@ public class HomeFragment extends Fragment {
                                 txtTemp.setText(message.toString() + "°C");
                             } else if (topic.contains("humid")) {
                                 txtHumidity.setText(message.toString() + "%");
-                            }
-                            else if (topic.contains("routine"))
-                            {
+                            } else if (topic.contains("routine")) {
                             }
                         } catch (NumberFormatException e) {
                             Log.e("Error", "Failed to parse message to integer: " + e.getMessage());
@@ -170,22 +159,11 @@ public class HomeFragment extends Fragment {
                     }
                 });
             }
-
             @Override
             public void deliveryComplete(IMqttDeliveryToken token) {
 
             }
         });
-    }
-
-    public void autoRefresh(){
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                onResume();
-                handler.postDelayed(this, 0);
-            }
-        }, 0);
     }
 
     private void startDataUpdate(TextView textview1, TextView textview2) {
@@ -204,28 +182,34 @@ public class HomeFragment extends Fragment {
                 int data1 = containsML1 ? Integer.parseInt(oldData1.replaceAll("\\D+", "")) : 0;
                 int data2 = containsML2 ? Integer.parseInt(oldData2.replaceAll("\\D+", "")) : 0;
 
-                Data1 = data1 + randomIncrement1;
-                Data2 = data2 + randomIncrement2;
-                Data1 = Math.max(Data1, 0);
-                Data2 = Math.max(Data2, 0);
+                Data1 = data1 - randomIncrement1;
+                Data2 = data2 - randomIncrement2;
+                if(Data1<=0)
+                {
+                    Data1=5000;
+                }
+                if(Data2<=0)
+                {
+                    Data2=5000;
+                }
                 String newData1 = Data1 + "ml";
                 String newData2 = Data2 + "ml";
                 textview1.setText(newData1);
                 textview2.setText(newData2);
+                handler.postDelayed(this, 10000);
+            }
+        }, 0);
+    }
+    private void refresh_auto() {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
                 onResume();
-                handler.postDelayed(this, 15000);
+                handler.postDelayed(this, 100);
             }
         }, 0);
     }
 
-    private void sendNotification(int state,int id){
-        Calendar calendar = Calendar.getInstance();
-        Intent intent = new Intent(getContext(), notification.class);
-        intent.setAction("maybom");
-        intent.putExtra("id", id);
-        intent.putExtra("state", state);
-        alarmManager = (AlarmManager) getContext().getSystemService(ALARM_SERVICE);
-        pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-    }
+
+
 }

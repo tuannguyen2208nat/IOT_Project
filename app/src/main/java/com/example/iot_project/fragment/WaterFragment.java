@@ -22,15 +22,23 @@ import android.widget.Toast;
 
 import com.example.iot_project.R;
 import com.example.iot_project.adapter.RecycleViewAdapter;
+import com.example.iot_project.database.MQTTHelper;
 import com.example.iot_project.database.SQLiteHelper;
 import com.example.iot_project.model.Item;
 import com.example.iot_project.notification.notification;
 
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+
+import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.List;
 
 public class WaterFragment extends Fragment {
-
+    MQTTHelper mqttHelper;
+    String link="tuannguyen2208natIOT/feeds/routine";
     LinearLayout layout_btn_on, layout_tu_dong, layout_btn_off;
     Button btn_thu_cong, btn_tu_dong, btnTuoi, btnTat;
     EditText water, timePicker_on, timePicker_off;
@@ -62,6 +70,7 @@ public class WaterFragment extends Fragment {
         layout_btn_on.setVisibility(View.GONE);
         layout_btn_off.setVisibility(View.GONE);
         layout_tu_dong.setVisibility(View.GONE);
+        startMQTT();
 
 
 
@@ -144,7 +153,6 @@ public class WaterFragment extends Fragment {
                                     showAlert("Thời gian kết thúc tưới không hợp lệ. Vui lòng nhập lại.");
                                     return;
                                 }
-
                                 day=calendar.get(Calendar.DAY_OF_MONTH);
                                 month= calendar.get(Calendar.MONTH) + 1;
                                 year= calendar.get(Calendar.YEAR);
@@ -163,20 +171,7 @@ public class WaterFragment extends Fragment {
                                 }
                                 timePicker = sday + "/"+smonth+"/"+syear+"-"+shour+":"+sminute;
                                 starttime=shour+":"+sminute;
-                                calendar.setTimeInMillis(System.currentTimeMillis());
-                                calendar.set(Calendar.HOUR_OF_DAY, hour_on);
-                                calendar.set(Calendar.MINUTE, minute_on);
-                                calendar.set(Calendar.SECOND, 0);
-
-                                intent.setAction("hengio_tuoi");
-                                intent.putExtra("area", area);
-                                alarmManager = (AlarmManager) getContext().getSystemService(ALARM_SERVICE);
-                                pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-
-                                //////
-                                //////
-                                //////
+                                sendDataMQTT(link,starttime+"/"+"8"+"/on");
                                 shour = String.valueOf(hour_off);
                                 sminute = String.valueOf(minute_off);
                                 if(hour_off<10)
@@ -188,7 +183,7 @@ public class WaterFragment extends Fragment {
                                     sminute="0"+sminute;
                                 }
                                 endtime=shour+":"+sminute;
-
+                                sendDataMQTT(link,starttime+"/"+"8"+"/off");
                                 detail = "Đặt hẹn giờ tưới cho khu vực "+area+ " bắt đầu tuới từ "+starttime+" đến " +endtime+" thành công.";
                                 addItemAndReload(timePicker, detail);
                                 Toast.makeText(getActivity(), "Đặt hẹn giờ  tưới cho khu vực "+area+ " thành công!", Toast.LENGTH_SHORT).show();
@@ -218,6 +213,7 @@ public class WaterFragment extends Fragment {
                                 }
                                 timePicker = sday + "/"+smonth+"/"+syear+"-"+shour+":"+sminute;
                                 starttime=shour+":"+sminute;
+                                sendDataMQTT(link,starttime+"/"+"8"+"/on");
                                 detail = "Máy bơm tưới cây khu vực "+area + " bắt đầu tuới từ "+starttime;
                                 addItemAndReload(timePicker, detail);
                                 Toast.makeText(getActivity(), "Máy bơm tưới cây khu vực "+ area + " bắt đầu tuới", Toast.LENGTH_SHORT).show();
@@ -269,6 +265,8 @@ public class WaterFragment extends Fragment {
                     {
                         sminute="0"+sminute;
                     }
+                    String endtime=shour+":"+sminute;
+                    sendDataMQTT(link,endtime+"/"+"8"+"/off");
                     String  timePicker = sday + "/"+smonth+"/"+syear+"-"+shour+":"+sminute;
                     String detail = "Máy bơm tưới cây khu vực " + area + " kết thúc.";
                     addItemAndReload(timePicker, detail);
@@ -329,5 +327,41 @@ public class WaterFragment extends Fragment {
                 .setMessage(message)
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
+    }
+
+    public void startMQTT() {
+        mqttHelper = new MQTTHelper(getContext());
+        mqttHelper.setCallback(new MqttCallbackExtended() {
+            @Override
+            public void connectComplete(boolean reconnect, String serverURI) {
+
+            }
+            @Override
+            public void connectionLost(Throwable cause) {
+
+            }
+            @Override
+            public void messageArrived(String topic, MqttMessage message) throws Exception {
+
+            }
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+
+            }
+        });
+    }
+
+    public void sendDataMQTT(String topic, String value){
+        MqttMessage msg = new MqttMessage();
+        msg.setId(1234);
+        msg.setQos(0);
+        msg.setRetained(false);
+
+        byte[] b = value.getBytes(Charset.forName("UTF-8"));
+        msg.setPayload(b);
+        try {
+            mqttHelper.mqttAndroidClient.publish(topic, msg);
+        }catch (MqttException e){
+        }
     }
 }

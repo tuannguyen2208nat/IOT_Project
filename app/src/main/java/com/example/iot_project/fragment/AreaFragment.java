@@ -27,14 +27,23 @@ import android.widget.Toast;
 
 import com.example.iot_project.R;
 import com.example.iot_project.adapter.RecycleViewAdapter;
+import com.example.iot_project.database.MQTTHelper;
 import com.example.iot_project.database.SQLiteHelper;
 import com.example.iot_project.model.Item;
 import com.example.iot_project.notification.notification;
 
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+
+import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.List;
 
 public class AreaFragment extends Fragment {
+    MQTTHelper mqttHelper;
+    String link="tuannguyen2208natIOT/feeds/routine";
     private LinearLayout layout_mix1, layout_mix2, layout_mix3;
     Button btn_mix1, btn_mix2, btn_mix3, btn_mixer;
     ImageButton imgbtn_mix1, imgbtn_mix2, imgbtn_mix3;
@@ -86,6 +95,7 @@ public class AreaFragment extends Fragment {
         setupImageButtonClickListener(imgbtn_mix1, layout_mix1);
         setupImageButtonClickListener(imgbtn_mix2, layout_mix2);
         setupImageButtonClickListener(imgbtn_mix3, layout_mix3);
+        startMQTT();
 
         CompoundButton.OnCheckedChangeListener listener = new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -196,6 +206,7 @@ public class AreaFragment extends Fragment {
         }
         Toast.makeText(getActivity(), "Đang xử lý...", Toast.LENGTH_SHORT).show();
         try {
+            int AREA=area+3;
             int time = Integer.parseInt(timeText);
             int hour , minute ,day,month,year, timeIntCD ;
             String shour , sminute ,sday,smonth,syear,starttime,endtime,timePicker,detail;
@@ -234,17 +245,7 @@ public class AreaFragment extends Fragment {
                     }
                     timePicker = sday + "/"+smonth+"/"+syear+"-"+shour+":"+sminute;
                     starttime=shour+":"+sminute;
-                    calendar.setTimeInMillis(System.currentTimeMillis());
-                    calendar.set(Calendar.HOUR_OF_DAY, hour);
-                    calendar.set(Calendar.MINUTE, minute);
-                    calendar.set(Calendar.SECOND, 0);
-
-                    intent.setAction("hengio_tuoi_tron");
-                    intent.putExtra("botron", botron);
-                    intent.putExtra("area", area);
-                    alarmManager = (AlarmManager) getContext().getSystemService(ALARM_SERVICE);
-                    pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                    sendDataMQTT(link,starttime+"/"+AREA+"/on");
 
                     timeIntCD = minute + time;
                     if (timeIntCD >= 60) {
@@ -255,7 +256,16 @@ public class AreaFragment extends Fragment {
                     }
                     shour = String.valueOf(hour);
                     sminute = String.valueOf(minute);
+                    if(hour<10)
+                    {
+                        shour="0"+shour;
+                    }
+                    if(minute<10)
+                    {
+                        sminute="0"+sminute;
+                    }
                     endtime=shour+":"+sminute;
+                    sendDataMQTT(link,endtime+"/"+AREA+"/off");
                     detail = "Đặt hẹn giờ cho bộ trộn "+botron+ " tưới cho khu vực " + area + " bắt đầu tuới từ "+starttime+" đến " +endtime+" thành công.";
                     addItemAndReload(timePicker, detail);
                     Toast.makeText(getActivity(), "Đặt hẹn giờ bộ trộn "+botron+ " tưới khu vực " + area + " thành công!", Toast.LENGTH_SHORT).show();
@@ -285,7 +295,7 @@ public class AreaFragment extends Fragment {
                     }
                     timePicker = sday + "/"+smonth+"/"+syear+"-"+shour+":"+sminute;
                     starttime=shour+":"+sminute;
-
+                    sendDataMQTT(link,starttime+"/"+AREA+"/on");
                     timeIntCD = minute + time;
                     if (timeIntCD >= 60) {
                         hour = hour + timeIntCD / 60;
@@ -304,7 +314,7 @@ public class AreaFragment extends Fragment {
                         sminute="0"+sminute;
                     }
                     endtime=shour+":"+sminute;
-
+                    sendDataMQTT(link,endtime+"/"+AREA+"/off");
                     detail = "Đặt bộ trộn "+botron+ " tưới cho khu vực " + area + " bắt đầu tuới từ "+starttime+" đến " +endtime+" thành công.";
                     addItemAndReload(timePicker, detail);
                     Toast.makeText(getActivity(), "Đặt bộ trộn "+botron+ " tưới khu vực " + area + " thành công!", Toast.LENGTH_SHORT).show();
@@ -349,5 +359,41 @@ public class AreaFragment extends Fragment {
         Log.e("AreaFragment", "FHi");
         adapter.setList(list);
         adapter.notifyDataSetChanged();
+    }
+
+    public void startMQTT() {
+        mqttHelper = new MQTTHelper(getContext());
+        mqttHelper.setCallback(new MqttCallbackExtended() {
+            @Override
+            public void connectComplete(boolean reconnect, String serverURI) {
+
+            }
+            @Override
+            public void connectionLost(Throwable cause) {
+
+            }
+            @Override
+            public void messageArrived(String topic, MqttMessage message) throws Exception {
+
+            }
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+
+            }
+        });
+    }
+
+    public void sendDataMQTT(String topic, String value){
+        MqttMessage msg = new MqttMessage();
+        msg.setId(1234);
+        msg.setQos(0);
+        msg.setRetained(false);
+
+        byte[] b = value.getBytes(Charset.forName("UTF-8"));
+        msg.setPayload(b);
+        try {
+            mqttHelper.mqttAndroidClient.publish(topic, msg);
+        }catch (MqttException e){
+        }
     }
 }
