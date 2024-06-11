@@ -41,7 +41,7 @@
             android:gravity="center"
             android:text="Tưới cây"
             android:textColor="@android:color/holo_blue_dark"
-            android:textSize="30sp"
+            android:textSize="25sp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -52,10 +52,108 @@
         android:gravity="center"
         tools:ignore="NestedWeights"
         android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="2"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/layout_pump_in"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:background="@drawable/border_black_2dp"
+                tools:ignore="NestedWeights">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <Button
+                        android:id="@+id/btn_pump_in"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="Bơm vào"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/black"
+                        android:background="@android:color/transparent"
+                        >
+
+                    </Button>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="2"
+                    tools:ignore="NestedWeights">
+
+                    <ImageButton
+                        android:id="@+id/imgbtn_pump_in"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/mixer_1"
+                        tools:ignore="NestedWeights" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_pump_out"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:background="@drawable/border_black_2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <Button
+                        android:id="@+id/btn_pump_out"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="Bơm xả"
+                        android:textColor="@android:color/black"
+                        android:background="@android:color/transparent"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="2"
+                    tools:ignore="NestedWeights">
+
+                    <ImageButton
+                        android:id="@+id/imgbtn_pump_out"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/mixer_2"
+                        tools:ignore="NestedWeights" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
             android:gravity="center"
             android:orientation="horizontal"
             tools:ignore="NestedWeights"
@@ -110,51 +208,6 @@
                     android:textSize="20sp"/>
             </LinearLayout>
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            tools:ignore="NestedWeights"
-            android:orientation="horizontal">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_margin="10dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:padding="10dp"
-                    android:id="@+id/btn_thu_cong"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/button_manual"
-                    android:text="Thủ công"
-                    android:textColor="#000000"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_margin="10dp">
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_tu_dong"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="10dp"
-                android:background="@drawable/button_automatic"
-                android:text="Tự động"
-                android:textColor="#000000"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-            </LinearLayout>
-        </LinearLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -164,8 +217,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:id="@+id/layout_btn_on">
+                android:orientation="vertical">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -194,73 +246,6 @@
                         android:textSize="20sp"
                         android:textStyle="bold" />
                 </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:id="@+id/layout_tu_dong">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        tools:ignore="NestedWeights"
-                        android:orientation="horizontal"
-                        >
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="left|center_vertical"
-                            android:text="Bắt đầu tưới"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            tools:ignore="NestedWeights,RtlHardcoded"/>
-
-                        <EditText
-                            android:id="@+id/timePicker_on"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:hint="HH:mm"
-                            android:inputType="time"
-                            android:textAlignment="center"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        tools:ignore="NestedWeights"
-                        android:orientation="horizontal"
-                        >
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="left|center_vertical"
-                            android:text="Kết thúc tưới"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            tools:ignore="NestedWeights,RtlHardcoded"/>
-
-                        <EditText
-                            android:id="@+id/timePicker_off"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:hint="HH:mm"
-                            android:inputType="time"
-                            android:textAlignment="center"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                </LinearLayout>
-            </LinearLayout>
 
         </LinearLayout>
     </LinearLayout>
@@ -279,17 +264,12 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:background="@drawable/button_main"
-            android:text="Tưới"
+            android:text="Bật"
             android:textColor="#000000"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_marginHorizontal="10dp" />
-        <LinearLayout
-            android:id="@+id/layout_btn_off"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="10dp">
+
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_tat"
                 android:layout_weight="1"
@@ -300,7 +280,7 @@
                 android:textColor="#000000"
                 android:textSize="20sp"
                 android:textStyle="bold" />
-        </LinearLayout>
 
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

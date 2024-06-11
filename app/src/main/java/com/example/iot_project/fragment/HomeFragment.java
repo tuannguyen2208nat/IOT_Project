@@ -1,6 +1,11 @@
 package com.example.iot_project.fragment;
 
+import static android.content.Context.ALARM_SERVICE;
+
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +29,7 @@ import com.example.iot_project.adapter.RecycleViewAdapter;
 import com.example.iot_project.database.MQTTHelper;
 import com.example.iot_project.database.SQLiteHelper;
 import com.example.iot_project.model.Item;
+import com.example.iot_project.notification.notification;
 import com.squareup.picasso.Picasso;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -33,6 +39,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -48,6 +55,8 @@ public class HomeFragment extends Fragment {
     private SQLiteHelper db;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Random random = new Random();
+    AlarmManager alarmManager;
+    PendingIntent pendingIntent;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -151,7 +160,26 @@ public class HomeFragment extends Fragment {
                                 txtTemp.setText(message.toString() + "°C");
                             } else if (topic.contains("humid")) {
                                 txtHumidity.setText(message.toString() + "%");
-                            } else if (topic.contains("routine")) {
+                            } else if (topic.contains("history")) {
+                                String messageStr = message.toString();
+                                try {
+                                    Intent intent = new Intent(getContext(), notification.class);
+                                    Calendar calendar=Calendar.getInstance();
+                                    JSONObject jsonObject = new JSONObject(messageStr);
+                                    String time = jsonObject.getString("time");
+                                    int id = jsonObject.getInt("id");
+                                    String status = jsonObject.getString("status");
+                                    intent.setAction("recive_data");
+                                    intent.putExtra("time", time);
+                                    intent.putExtra("id", id);
+                                    intent.putExtra("status",status);
+                                    alarmManager = (AlarmManager) getContext().getSystemService(ALARM_SERVICE);
+                                    pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                                    alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+                                } catch (Exception e) {
+                                    Log.e("Error", "Failed to parse JSON: " + e.getMessage());
+                                }
                             }
                         } catch (NumberFormatException e) {
                             Log.e("Error", "Failed to parse message to integer: " + e.getMessage());
@@ -159,12 +187,14 @@ public class HomeFragment extends Fragment {
                     }
                 });
             }
+
             @Override
             public void deliveryComplete(IMqttDeliveryToken token) {
 
             }
         });
     }
+
 
     private void startDataUpdate(TextView textview1, TextView textview2) {
         handler.postDelayed(new Runnable() {
@@ -209,7 +239,5 @@ public class HomeFragment extends Fragment {
             }
         }, 0);
     }
-
-
 
 }

@@ -15,7 +15,7 @@
         android:icon="@drawable/nav_mixer"
   />
     <item
-        android:id="@+id/nav_area"
-        android:title="Tưới phân"
-        android:icon="@drawable/nav_area"/>
+        android:id="@+id/nav_timer"
+        android:title="Đặt lịch"
+        android:icon="@drawable/nav_timer"/>
 </menu>

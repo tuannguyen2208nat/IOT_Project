@@ -1,14 +1,13 @@
 package com.example.iot_project.fragment;
 
-import static android.content.Context.ALARM_SERVICE;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
-import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +19,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.iot_project.R;
@@ -28,14 +26,10 @@ import com.example.iot_project.adapter.RecycleViewAdapter;
 import com.example.iot_project.database.MQTTHelper;
 import com.example.iot_project.database.SQLiteHelper;
 import com.example.iot_project.model.Item;
-import com.example.iot_project.notification.notification;
-
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.List;
 
@@ -43,13 +37,11 @@ public class MixFragment extends Fragment {
     MQTTHelper mqttHelper;
     String link="tuannguyen2208natIOT/feeds/routine";
     private LinearLayout layout_mix1, layout_mix2, layout_mix3;
-    Button btn_mix1, btn_mix2, btn_mix3, btn_mixer;
+    Button btn_mix1, btn_mix2, btn_mix3, btn_on,btn_off;
     ImageButton imgbtn_mix1, imgbtn_mix2, imgbtn_mix3;
-    private LinearLayout currentSelectedLayout = null, layout_scheduler_timePicker;
-    private EditText scheduler_name, scheduler_water, scheduler_liquid, scheduler_timePicker, scheduler_time;
-    AlarmManager alarmManager;
-    PendingIntent pendingIntent;
-    private int botron = 0, mode = 0;
+    private LinearLayout currentSelectedLayout = null, layout_scheduler_timePicker,layout_thucong;
+    private EditText  scheduler_water, scheduler_liquid, scheduler_timePicker;
+    private int botron = 0, mode = 1;
     RecycleViewAdapter adapter;
     private SQLiteHelper db;
 
@@ -57,9 +49,10 @@ public class MixFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mix, container, false);
         db = new SQLiteHelper(getContext());
+        mqttHelper = new MQTTHelper(getContext());
 
         Spinner select_mode = view.findViewById(R.id.select_mode);
-        String[] options = {"Bây giờ", "Hẹn giờ"};
+        String[] options = { "Thủ công","Tự động"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, options);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         select_mode.setAdapter(adapter);
@@ -68,22 +61,22 @@ public class MixFragment extends Fragment {
         layout_mix2 = view.findViewById(R.id.layout_mix_2);
         layout_mix3 = view.findViewById(R.id.layout_mix_3);
         layout_scheduler_timePicker = view.findViewById(R.id.layout_scheduler_timePicker);
+        layout_thucong=view.findViewById(R.id.layout_thucong);
 
         btn_mix1 = view.findViewById(R.id.btn_mix_1);
         btn_mix2 = view.findViewById(R.id.btn_mix_2);
         btn_mix3 = view.findViewById(R.id.btn_mix_3);
-        btn_mixer = view.findViewById(R.id.btn_mixer);
+        btn_on=view.findViewById(R.id.btn_on);
+        btn_off=view.findViewById(R.id.btn_off);
+
         imgbtn_mix1 = view.findViewById(R.id.imgbtn_1);
         imgbtn_mix2 = view.findViewById(R.id.imgbtn_2);
         imgbtn_mix3 = view.findViewById(R.id.imgbtn_3);
 
-        scheduler_name = view.findViewById(R.id.scheduler_name);
         scheduler_water = view.findViewById(R.id.scheduler_water);
         scheduler_liquid = view.findViewById(R.id.scheduler_liquid);
         scheduler_timePicker = view.findViewById(R.id.scheduler_timePicker);
-        scheduler_time = view.findViewById(R.id.scheduler_time);
 
-        // Setup button and image button click listeners
         setupButtonClickListener(btn_mix1, layout_mix1);
         setupButtonClickListener(btn_mix2, layout_mix2);
         setupButtonClickListener(btn_mix3, layout_mix3);
@@ -92,17 +85,20 @@ public class MixFragment extends Fragment {
         setupImageButtonClickListener(imgbtn_mix2, layout_mix2);
         setupImageButtonClickListener(imgbtn_mix3, layout_mix3);
 
-        btn_mixer.setOnClickListener(v -> handleMixButtonClick());
+        btn_on.setOnClickListener(v -> handleMixButtonClick());
+        btn_off.setOnClickListener(v -> handleOffButtonClick());
 
         select_mode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedOption = (String) parent.getItemAtPosition(position);
-                if ("Hẹn giờ".equals(selectedOption)) {
-                    layout_scheduler_timePicker.setVisibility(View.VISIBLE);
-                    mode = 1;
-                } else if ("Bây giờ".equals(selectedOption)) {
+                if ("Thủ công".equals(selectedOption)) {
                     layout_scheduler_timePicker.setVisibility(View.GONE);
+                    layout_thucong.setVisibility(View.VISIBLE);
+                    mode = 1;
+                } else if ("Tự động".equals(selectedOption)) {
+                    layout_scheduler_timePicker.setVisibility(View.VISIBLE);
+                    layout_thucong.setVisibility(View.GONE);
                     mode = 2;
                 }
             }
@@ -112,8 +108,6 @@ public class MixFragment extends Fragment {
                 // Do nothing
             }
         });
-
-        startMQTT();
 
         return view;
     }
@@ -132,96 +126,39 @@ public class MixFragment extends Fragment {
             return;
         }
 
-        String nameText = scheduler_name.getText().toString();
         String waterText = scheduler_water.getText().toString();
         String liquidText = scheduler_liquid.getText().toString();
-        String timePickerText = scheduler_timePicker.getText().toString();
-        String timeText = scheduler_time.getText().toString();
 
-        if (nameText.isEmpty() || waterText.isEmpty() || liquidText.isEmpty()) {
-            showAlert("Bạn chưa nhập đủ thông tin");
+        if ( waterText.isEmpty()) {
+            showAlert("Vui lòng nhập lượng nước, dung dịch");
+            return;
+        }
+        if(liquidText.isEmpty())
+        {
+            showAlert("Vui lòng nhập lượng nước, dung dịch");
             return;
         }
 
-        if (timeText.isEmpty()) {
-            showAlert("Bạn chưa nhập thời gian trộn");
-            return;
-        }
 
-        if (mode == 1 && timePickerText.isEmpty()) {
-            showAlert("Bạn chưa nhập thời gian hẹn giờ");
-            return;
-        }
-
-        try {
-            int water = Integer.parseInt(waterText);
-            int liquid = Integer.parseInt(liquidText);
-            int time = Integer.parseInt(timeText);
-            int hour , minute ,day,month,year, timeIntCD ;
-            String shour , sminute ,sday,smonth,syear,starttime,endtime,timePicker,detail;
-            Intent intent = new Intent(getContext(), notification.class);
-            Calendar calendar = Calendar.getInstance();
+            int hour , minute ,day,month,year;
+            String shour , sminute ,sday,smonth,syear,timePicker,detail;
             Toast.makeText(getActivity(), "Đang xử lý...", Toast.LENGTH_SHORT).show();
+            CountDownTimer Timer;
             switch (mode) {
                 case 1:
-                    if (!timePickerText.contains(":")) {
-                        showAlert("Vui lòng nhập đúng định dạng thời gian");
-                        break;
-                    }
-                    String[] timeParts = timePickerText.split(":");
-                    hour = Integer.parseInt(timeParts[0].trim());
-                    minute = Integer.parseInt(timeParts[1].trim());
-                    if ((hour < 0 || hour > 23) || (minute < 0 || minute > 59)) {
-                        showAlert("Thời gian không hợp lệ. Vui lòng nhập lại.");
-                        return;
-                    }
-                    day=calendar.get(Calendar.DAY_OF_MONTH);
-                    month= calendar.get(Calendar.MONTH) + 1;
-                    year= calendar.get(Calendar.YEAR);
-                    shour = String.valueOf(hour);
-                    sminute = String.valueOf(minute);
-                    sday=String.valueOf(day);
-                    smonth=String.valueOf(month);
-                    syear=String.valueOf(year);
-                    if(hour<10)
-                    {
-                        shour="0"+shour;
-                    }
-                    if(minute<10)
-                    {
-                        sminute="0"+sminute;
-                    }
-                    timePicker = sday + "/"+smonth+"/"+syear+"-"+shour+":"+sminute;
-                    starttime=shour+":"+sminute;
-                    sendDataMQTT(link,starttime+"/"+botron+"/on");
-
-                    timeIntCD = minute + time;
-                    if (timeIntCD >= 60) {
-                        hour = hour + timeIntCD / 60;
-                        minute = timeIntCD % 60;
-                    } else {
-                        minute = timeIntCD;
-                    }
-                    shour = String.valueOf(hour);
-                    sminute = String.valueOf(minute);
-                    if(hour<10)
-                    {
-                        shour="0"+shour;
-                    }
-                    if(minute<10)
-                    {
-                        sminute="0"+sminute;
-                    }
-                    endtime=shour+":"+sminute;
-                    sendDataMQTT(link,endtime+"/"+botron+"/off");
-                    detail = "Đặt hẹn giờ cho bộ trộn "+botron + " tên bộ trộn :  " + nameText + " bắt đầu trộn từ "+starttime+" đến " +endtime+" thành công.";
-                    addItemAndReload(timePicker, detail);
-                    Toast.makeText(getActivity(), "Đặt hẹn giờ bộ trộn "+botron+ " thành công!", Toast.LENGTH_SHORT).show();
+                    sendDataMQTT(link,botron+"/on");
+                    Toast.makeText(getActivity(), "Bộ trộn khu vực "+ botron + " bắt đầu trộn", Toast.LENGTH_SHORT).show();
                     resetFields();
                     break;
-
                 case 2:
-                    calendar = Calendar.getInstance();
+                    String timePickerText = scheduler_timePicker.getText().toString();
+                    if (timePickerText.isEmpty()) {
+                        showAlert("Vui lòng nhập thời gian tắt");
+                        return;
+                    }
+                    int time=Integer.parseInt(timePickerText);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(System.currentTimeMillis());
                     hour = calendar.get(Calendar.HOUR_OF_DAY);
                     minute = calendar.get(Calendar.MINUTE);
                     day=calendar.get(Calendar.DAY_OF_MONTH);
@@ -241,41 +178,35 @@ public class MixFragment extends Fragment {
                         sminute="0"+sminute;
                     }
                     timePicker = sday + "/"+smonth+"/"+syear+"-"+shour+":"+sminute;
-                    starttime=shour+":"+sminute;
-                    sendDataMQTT(link,starttime+"/"+botron+"/on");
-
-                    timeIntCD = minute + time;
-                    if (timeIntCD >= 60) {
-                        hour = hour + timeIntCD / 60;
-                        minute = timeIntCD % 60;
-                    } else {
-                        minute = timeIntCD;
-                    }
-                    shour = String.valueOf(hour);
-                    sminute = String.valueOf(minute);
-                    if(hour<10)
-                    {
-                        shour="0"+shour;
-                    }
-                    if(minute<10)
-                    {
-                        sminute="0"+sminute;
-                    }
-                    endtime=shour+":"+sminute;
-                    sendDataMQTT(link,endtime+"/"+botron+"/off");
-                    detail = "Đặt bộ trộn "+botron + " tên bộ trộn : ( " + nameText + " ) bắt đầu trộn từ "+starttime+" đến " +endtime+" thành công.";
+                    detail = "Đặt bộ trộn "+ botron + " hẹn giờ trộn "+ time + " phút , thành công.";
                     addItemAndReload(timePicker, detail);
+                    sendDataMQTT(link,botron+"/on");
                     Toast.makeText(getActivity(), "Đặt bộ trộn "+botron+ " thành công!", Toast.LENGTH_SHORT).show();
+                    Timer=new CountDownTimer(time * 60 * 1000, 1000) {
+                        public void onTick(long millisUntilFinished) {
+                        }
+                        public void onFinish() {
+                            sendDataMQTT(link,botron+"/off");
+                        }
+                    }.start();
                     resetFields();
                     break;
-
                 default:
                     break;
             }
-        } catch (NumberFormatException e) {
-            showAlert("Thông tin nước, dung dịch và thời gian phải là số");
-        }
     }
+
+    private void handleOffButtonClick(){
+        if (botron != 1 && botron != 2 && botron != 3) {
+            showAlert("Bạn chưa chọn bộ trộn");
+            return;
+        }
+        Toast.makeText(getActivity(), "Đang xử lý...", Toast.LENGTH_SHORT).show();
+        sendDataMQTT(link,botron+"/off");
+        Toast.makeText(getActivity(), "Bộ trộn khu vực "+ botron + " kết thúc trộn.", Toast.LENGTH_SHORT).show();
+        resetFields();
+    }
+
 
     private void changeLayoutColor(LinearLayout newLayout) {
         if (currentSelectedLayout != null) {
@@ -301,8 +232,6 @@ public class MixFragment extends Fragment {
     }
 
     private void resetFields() {
-        scheduler_name.setText("");
-        scheduler_time.setText("");
         scheduler_liquid.setText("");
         scheduler_water.setText("");
         scheduler_timePicker.setText("");
@@ -325,39 +254,18 @@ public class MixFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-    public void startMQTT() {
-        mqttHelper = new MQTTHelper(getContext());
-        mqttHelper.setCallback(new MqttCallbackExtended() {
-            @Override
-            public void connectComplete(boolean reconnect, String serverURI) {
-
-            }
-            @Override
-            public void connectionLost(Throwable cause) {
-
-            }
-            @Override
-            public void messageArrived(String topic, MqttMessage message) throws Exception {
-
-            }
-            @Override
-            public void deliveryComplete(IMqttDeliveryToken token) {
-
-            }
-        });
-    }
-
     public void sendDataMQTT(String topic, String value){
         MqttMessage msg = new MqttMessage();
         msg.setId(1234);
         msg.setQos(0);
         msg.setRetained(false);
 
-        byte[] b = value.getBytes(Charset.forName("UTF-8"));
+        byte[] b = value.getBytes(StandardCharsets.UTF_8);
         msg.setPayload(b);
         try {
             mqttHelper.mqttAndroidClient.publish(topic, msg);
         }catch (MqttException e){
+            Log.e("MixFragment","MixFragment can't send data");
         }
     }
 }

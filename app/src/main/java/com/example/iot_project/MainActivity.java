@@ -9,7 +9,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.iot_project.databinding.ActivityMainBinding;
-import com.example.iot_project.fragment.AreaFragment;
+import com.example.iot_project.fragment.TimerFragment;
 import com.example.iot_project.fragment.HomeFragment;
 import com.example.iot_project.fragment.MixFragment;
 import com.example.iot_project.fragment.WaterFragment;
@@ -31,8 +31,8 @@ public class MainActivity extends AppCompatActivity {
                 replaceFragment(new WaterFragment(), "WATER");
             } else if (item.getItemId() == R.id.nav_mixer) {
                 replaceFragment(new MixFragment(), "MIX");
-            } else if (item.getItemId() == R.id.nav_area) {
-                replaceFragment(new AreaFragment(), "AREA");
+            } else if (item.getItemId() == R.id.nav_timer) {
+                replaceFragment(new TimerFragment(), "AREA");
             }
             return true;
         });

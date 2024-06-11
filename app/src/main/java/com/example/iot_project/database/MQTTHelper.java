@@ -18,10 +18,10 @@ public class MQTTHelper {
     public MqttAndroidClient mqttAndroidClient;
     final String clientId = "112245678";
     final String username = "tuannguyen2208natIOT";
-    final String password = "aio_xyie16YldbqR8y45fbpGEesdwYIx";
+    final String password = "aio_ZAqX84imHVzf2f8j7gO0vH5JdvTP";
     final String serverUri = "tcp://io.adafruit.com:1883";
     final String link=username+"/feeds/";
-    public final String[] arrayTopics = {link+"temp",link+"humid",link+"routine"};
+    public final String[] arrayTopics = {link+"temp",link+"humid",link+"routine",link+"history"};
 
     public MQTTHelper(Context context){
         mqttAndroidClient = new MqttAndroidClient(context, serverUri, clientId);
